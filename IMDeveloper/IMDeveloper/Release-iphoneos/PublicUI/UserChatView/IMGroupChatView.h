@@ -42,6 +42,12 @@
 @property (nonatomic, copy) NSString *groupID;
 
 /**
+ 是否显示群组聊天界面中的用户头像
+ 默认为YES
+ */
+@property (nonatomic, assign) BOOL showHeadView;
+
+/**
  是否显示群组聊天界面中的用户名
  默认为YES
  */
@@ -163,4 +169,6 @@
  聊天界面的父视图控制器
  */
 @property (nonatomic, weak)UIViewController *parentController;
+
+
 @end

@@ -12,6 +12,7 @@
 #import "IMUserInformationViewController.h"
 #import "IMGroupInfoViewController.h"
 #import "IMGroupListViewController.h"
+#import "IMSDKManager.h"
 
 //Third party
 #import "BDKNotifyHUD.h"
@@ -42,11 +43,16 @@
 {
     [_groupChatView setDelegate:nil];
     [_groupInfo setDelegate:nil];
+    
+    [g_pIMSDKManager removeRecentChatObject:_groupID];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [[g_pIMSDKManager recentChatObjects] addObject:_groupID];
+    
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"群信息" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
     
     [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];

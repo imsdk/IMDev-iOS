@@ -22,13 +22,13 @@
 
 @interface IMSettingViewController ()<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
-- (void)logoutBtnClick:(id)sender;
-
 @end
 
 @implementation IMSettingViewController {
     UITableView *_tableView;
     UIButton *_logoutBtn;
+    UISwitch *_soundSwitch;
+    UISwitch *_shakeSwitch;
     
     MBProgressHUD *_hud;
     
@@ -53,7 +53,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    _tableView = [[UITableView alloc] initWithFrame:[[self view] bounds] style:UITableViewStylePlain];
+    CGRect rect = [[self view] bounds];
+    
+    rect.size.height -= 114;
+    
+    _tableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     
     [_tableView setDataSource:self];
     [_tableView setDelegate:self];
@@ -76,14 +80,34 @@
     } failure:^(NSString *error) {
         
     }];
-//    _logoutBtn = [[UIButton alloc] initWithFrame:CGRectMake(40, 200, 240, 40)];
-//    
-//    [_logoutBtn setBackgroundColor:RGB(210, 0, 8)];
-//    [[_logoutBtn layer] setCornerRadius:5.0f];
-//    [_logoutBtn setTitle:@"注销" forState:UIControlStateNormal];
-//    [tableFooterView addSubview:_logoutBtn];
-//    
-//    [_logoutBtn addTarget:self action:@selector(logoutBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    
+    NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+    NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+    
+    _soundSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(320 - 60, 5, 60, 34)];
+    
+    if (sound) {
+        [_soundSwitch setOn:YES];
+        [userDefault setObject:[NSNumber numberWithBool:_soundSwitch.isOn] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+        [userDefault synchronize];
+    } else {
+        [_soundSwitch setOn:[sound boolValue]];
+    }
+    
+    [_soundSwitch addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventTouchUpInside];
+    
+    _shakeSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(320 - 60, 5, 60, 34)];
+    
+    if (shake) {
+        [_shakeSwitch setOn:YES];
+        [userDefault setObject:[NSNumber numberWithBool:_shakeSwitch.isOn] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+        [userDefault synchronize];
+    } else {
+        [_shakeSwitch setOn:[sound boolValue]];
+    }
+    [_shakeSwitch addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventTouchUpInside];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMCustomUserInfoDidInitializeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMReloadMainPhotoNotification([g_pIMMyself customUserID]) object:nil];
@@ -101,14 +125,14 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)logoutBtnClick:(id)sender {
-//    if (sender != _logoutBtn) {
-//        return;
-//    }
-//    
-//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"确定注销" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"注销" otherButtonTitles:nil];
-//    
-//    [actionSheet showFromTabBar:[self tabBarController].tabBar];
+- (void)switchValueChanged:(id)sender {
+    if (sender == _soundSwitch) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:_soundSwitch.isOn] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:_soundSwitch.isOn] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
 }
 
 
@@ -147,11 +171,11 @@
 #pragma mark - tableview datasource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 3;
+    return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 1) {
+    if (section == 1 || section == 2) {
         return 2;
     }
     return 1;
@@ -198,7 +222,23 @@
         [[cell textLabel] setText:@"修改密码"];
         [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-    } else {
+    }else if ([indexPath section] == 2 && [indexPath row] == 0) {
+        [[cell textLabel] setText:@"声音"];
+        [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
+        
+        if (![[[cell contentView] subviews] containsObject:_soundSwitch]) {
+            [cell addSubview:_soundSwitch];
+        }
+        
+    }else if ([indexPath section] == 2 && [indexPath row] == 1) {
+        [[cell textLabel] setText:@"震动"];
+        [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
+        
+        if (![[[cell contentView] subviews] containsObject:_shakeSwitch]) {
+            [cell addSubview:_shakeSwitch];
+        }
+    }
+    else {
         [[cell textLabel] setText:@"退出登录"];
         [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
         [[cell textLabel] setTextAlignment:NSTextAlignmentCenter];
@@ -251,7 +291,9 @@
         
         [controller setHidesBottomBarWhenPushed:YES];
         [[self navigationController] pushViewController:controller animated:YES];
-    } else {
+    } else if ([indexPath section] == 2) {
+        return;
+    }else {
         if (isLogouting) {
             return;
         }

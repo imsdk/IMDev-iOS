@@ -13,6 +13,8 @@
 #import "IMSettingViewController.h"
 #import "IMLoginViewController.h"
 #import "IMDefine.h"
+#import <AudioToolbox/AudioToolbox.h>
+#import "IMSDKManager.h"
 
 //thrid party
 #import "BDKNotifyHUD.h"
@@ -196,6 +198,56 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:IMLoginStatusChangedNotification object:nil];
 }
 
+- (void)didReceiveText:(NSString *)text fromCustomUserID:(NSString *)customUserID serverSendTime:(UInt32)timeIntervalSince1970 {
+    
+    if (![[g_pIMSDKManager recentChatObjects] containsObject:customUserID]) {
+        NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+        NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+        
+        if (!sound) {
+            sound = [NSNumber numberWithBool:YES];
+            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        }
+        
+        if ([sound boolValue]) {
+            AudioServicesPlayAlertSound(1015);
+        }
+        
+        NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+        
+        if (!shake) {
+            shake = [NSNumber numberWithBool:YES];
+            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        }
+        
+        if ([shake boolValue]) {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        }
+        
+    }
+    
+}
+
+- (void)failedToSendText:(NSString *)text toGroup:(NSString *)groupID clientSendTime:(UInt32)timeIntervalSince1970 error:(NSString *)error {
+    if ([error isEqualToString:@"Too frequently"]) {
+        _notifyText = @"消息发送太快啦，休息一下吧";
+        _notifyImage = [UIImage imageNamed:@"IM_alert_image.png"];
+        
+        [self displayNotifyHUD];
+    }
+}
+
+- (void)failedToSendText:(NSString *)text toUser:(NSString *)customUserID clientSendTime:(UInt32)timeIntervalSince1970 error:(NSString *)error {
+    if ([error isEqualToString:@"Too frequently"]) {
+        _notifyText = @"消息发送太快啦，休息一下吧";
+        _notifyImage = [UIImage imageNamed:@"IM_alert_image.png"];
+        
+        [self displayNotifyHUD];
+    }
+}
+
 
 #pragma mark - IMMyself custom userinfo delegate
 
@@ -240,6 +292,37 @@
 
 - (void)didRemoveGroup:(NSString *)groupID clientActionTime:(UInt32)timeIntervalSince1970 {
     [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadGroupListNotification object:nil];
+}
+
+- (void)didReceiveText:(NSString *)text fromGroup:(NSString *)groupID fromUser:(NSString *)customUserID serverSendTime:(UInt32)timeIntervalSince1970 {
+    if (![[g_pIMSDKManager recentChatObjects] containsObject:groupID]) {
+        NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+        NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+        
+        if (!sound) {
+            sound = [NSNumber numberWithBool:YES];
+            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        }
+        
+        if ([sound boolValue]) {
+            AudioServicesPlayAlertSound(1015);
+        }
+        
+        NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+        
+        if (!shake) {
+            shake = [NSNumber numberWithBool:YES];
+            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        }
+        
+        if ([shake boolValue]) {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        }
+        
+    }
+
 }
 
 

@@ -151,7 +151,7 @@
 - (void)recentContactsView:(IMRecentContactsView *)recentContactView didSelectRowWithCustomUserID:(NSString *)customUserID {
     _selectedCustomUserID = customUserID;
     
-    if (![g_pIMMyself isMyFriend:customUserID]) {
+    if (![g_pIMMyself isMyFriend:customUserID] && ![[g_pIMMyself customUserID] isEqualToString:customUserID]) {
         //if is not friend, enter information controller
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"你们还不是好友，需要先加他为好友" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];

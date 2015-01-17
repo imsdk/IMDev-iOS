@@ -23,8 +23,6 @@
 
 @interface IMAddGroupMemberViewController ()<UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate>
 
-// add friends
-- (void)addFriends:(id)sender;
 //load data
 - (NSMutableArray *)classifyData:(NSArray *)array;
 - (void)searchUserForCustomUserID:(NSString *)searchString;
@@ -183,7 +181,6 @@
     }
 }
 
-
 - (NSMutableArray *)classifyData:(NSArray *)array {
     NSMutableArray *classificationArray = [[NSMutableArray alloc] initWithCapacity:32];
     
@@ -235,6 +232,57 @@
     
     return classificationArray;
 }
+//- (NSMutableArray *)classifyData:(NSArray *)array {
+//    NSMutableArray *classificationArray = [[NSMutableArray alloc] initWithCapacity:32];
+//    
+//    array = [array sortedArrayUsingFunction:Array_sortByPinyin context:NULL];
+//    
+//    NSInteger offset = 0;
+//    
+//    NSMutableArray *symbolArray = [[NSMutableArray alloc] initWithCapacity:32];
+//    
+//    for (char c = 'A'; c <= 'Z'; c ++) {
+//        NSMutableArray *characterArray = [[NSMutableArray alloc] initWithCapacity:32];
+//        
+//        for (NSInteger i = offset; i < [array count]; i ++) {
+//            NSString *customUserID = [array objectAtIndex:i];
+//            
+//            if (![customUserID isKindOfClass:[NSString class]]) {
+//                offset ++;
+//                continue;
+//            }
+//            
+//            if (![[customUserID firstCharactor] isEqualToString:[NSString stringWithFormat:@"%c",c]]) {
+//                if ([[customUserID firstCharactor] compare:@"A"] == NSOrderedAscending ||
+//                    [[customUserID firstCharactor] compare:@"Z"] == NSOrderedDescending) {
+//                    [symbolArray addObject:customUserID];
+//                    offset ++;
+//                    continue;
+//                }
+//                
+//                break;
+//            }
+//            
+//            [characterArray addObject:customUserID];
+//            offset ++;
+//        }
+//        
+//        if ([characterArray count] > 0) {
+//            
+//            [_friendTitles addObject:[NSString stringWithFormat:@"%c",c]];
+//            
+//            [classificationArray addObject:characterArray];
+//        }
+//    }
+//    
+//    if ([symbolArray count] > 0) {
+//        [_friendTitles addObject:@"#"];
+//        
+//        [classificationArray addObject:symbolArray];
+//    }
+//    
+//    return classificationArray;
+//}
 
 - (void)searchUserForCustomUserID:(NSString *)searchString {
     [_searchResult removeAllObjects];
@@ -294,10 +342,6 @@
             return nil;
         }
         
-        if (section == 0) {
-            return nil;
-        }
-        
         return [_friendTitles objectAtIndex:section];
     }
     
@@ -306,9 +350,6 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if (tableView == _tableView) {
-        if(section == 0) {
-            return 0;
-        }
         
         return 24.0f;
     }
@@ -326,9 +367,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (tableView == _tableView) {
-        if (section == 0) {
-            return 1;
-        }
         
         if ([_friendList count] <= section) {
             return 0;
@@ -390,7 +428,6 @@
     [(IMContactTableViewCell *)cell setCustomUserID: customUserID];
     
     
-    
     UIImage *image = nil;
     
     if ([indexPath section] == 0) {
@@ -405,6 +442,8 @@
     
     [(IMContactTableViewCell *)cell setHeadPhoto:image];
     
+    [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
+    
     return cell;
 }
 
@@ -413,7 +452,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (_lastIndex && _lastIndex != indexPath) {
-        [_tableView deselectRowAtIndexPath:_lastIndex animated:YES];
+        [_tableView deselectRowAtIndexPath:_lastIndex animated:NO];
     }
     
     IMContactTableViewCell *cell = (IMContactTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];

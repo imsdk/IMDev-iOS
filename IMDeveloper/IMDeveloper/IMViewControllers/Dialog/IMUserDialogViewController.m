@@ -9,6 +9,7 @@
 #import "IMUserDialogViewController.h"
 #import "IMDefine.h"
 #import "IMUserInformationViewController.h"
+#import "IMSDKManager.h"
 
 //Third party
 #import "BDKNotifyHUD.h"
@@ -31,6 +32,11 @@
     UIImage *_notifyImage;
 }
 
+- (void)dealloc
+{
+    [g_pIMSDKManager removeRecentChatObject:_customUserID];
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -42,6 +48,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [[g_pIMSDKManager recentChatObjects] addObject:_customUserID];
     
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"个人信息" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
     
@@ -77,7 +85,7 @@
     [view setInputViewTintColor:RGB(245, 245, 245)];
     [view setSenderTintColor:RGB(44, 164, 232)];
     [view setReceiverTintColor:[UIColor lightGrayColor]];
-//    [view setParentController:self];
+    [view setParentController:self];
     [view setDelegate:self];
     [[self view] addSubview:view];
 }
@@ -133,6 +141,12 @@
     }
     
     _notifyText = error;
+    _notifyImage = [UIImage imageNamed:@"IM_alert_image.png"];
+    [self displayNotifyHUD];
+}
+
+- (void)notExistCustomUserID:(NSString *)customUserID {
+    _notifyText = @"对方用户不存在";
     _notifyImage = [UIImage imageNamed:@"IM_alert_image.png"];
     [self displayNotifyHUD];
 }

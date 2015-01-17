@@ -34,7 +34,9 @@
     
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8)
     {
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerForRemoteNotifications)]) {
+            [[UIApplication sharedApplication] performSelector:@selector(registerForRemoteNotifications) withObject:nil];
+        }
         
         UIUserNotificationType types = UIUserNotificationTypeBadge                                                                                                                      | UIUserNotificationTypeSound | UIUserNotificationTypeAlert ;
         

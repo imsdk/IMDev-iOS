@@ -36,9 +36,14 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
  */
 - (void)playAudioError:(NSString *)error;
 
+/**
+ 发消息失败原因为用户不存在时会回调该方法。
+ */
+- (void)notExistCustomUserID:(NSString *)customUserID;
+
 @end
 
-@interface IMChatView : UIView<IMChatViewDelegate>
+@interface IMChatView : UIView
 
 /**
  聊天界面代理
@@ -166,6 +171,9 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
  聊天界面的父视图控制器
  */
 @property (nonatomic, weak)UIViewController *parentController;
+
+@property (nonatomic, assign) BOOL showHeadView;
+
 @end
 
 
