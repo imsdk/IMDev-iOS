@@ -11,7 +11,7 @@
 /**
  @protocol
  @brief 群操作代理
- @discussion IMMyself+Grouo类别中的方法，无论是否带block方法，只要注册接收回调的对象到groupDelegate中，就能监听到回调方法。
+ @discussion IMMyself+Group类别中的方法，无论是否带block方法，只要注册接收回调的对象到groupDelegate中，就能监听到回调方法。
  */
 @protocol IMGroupDelegate <NSObject>
 

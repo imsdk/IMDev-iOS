@@ -31,3 +31,4 @@
 #define IMRemovedGroupNotification(groupID) [NSString stringWithFormat:@"IMRemovedGroupNotification%@",groupID]
 #define IMDeleteGroupNotification(groupID) [NSString stringWithFormat:@"IMDeleteGroupNotification%@",groupID]
 #define IMShowGroupMemberNameNotification(groupID) [NSString stringWithFormat:@"IMShowGroupMemberNameNotification%@",groupID]
+#define IMReceiveUserMessageNotification @"IMReceiveUserMessageNotification"

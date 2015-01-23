@@ -20,8 +20,11 @@
 /**
  用户可自定义每一个最近联系人的cell
  */
-- (UIView *)recentContactsView:(IMRecentContactsView *)recentContactView viewAtIndex:(NSInteger)index;
+- (UIView *)recentContactsView:(IMRecentContactsView *)recentContactsView viewAtIndex:(NSInteger)index;
 
+- (NSString *)recentContactsView:(IMRecentContactsView *)recentContactsView titleForIndex:(NSInteger)index;
+
+- (UIImage *)recentContactsView:(IMRecentContactsView *)recentContactsView imageForIndex:(NSInteger)index;
 @end
 
 /**
@@ -32,6 +35,7 @@
 /**
  选择某个最近联系人用户的回调方法
  */
+@optional
 - (void)recentContactsView:(IMRecentContactsView *)recentContactView didSelectRowWithCustomUserID:(NSString *)customUserID;
 
 @end

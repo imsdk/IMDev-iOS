@@ -147,6 +147,37 @@
     [[self view] removeFromSuperview];
 }
 
+- (void)receiveNewUserMessage:(NSString *)customUserID {
+    if (![[g_pIMSDKManager recentChatObjects] containsObject:customUserID]) {
+        NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+        NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+        
+        if (!sound) {
+            sound = [NSNumber numberWithBool:YES];
+            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        }
+        
+        if ([sound boolValue]) {
+            AudioServicesPlayAlertSound(1015);
+        }
+        
+        NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+        
+        if (!shake) {
+            shake = [NSNumber numberWithBool:YES];
+            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        }
+        
+        if ([shake boolValue]) {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:IMReceiveUserMessageNotification object:nil];
+    }
+}
+
 
 #pragma mark - IMMyself delegate
 
@@ -191,7 +222,6 @@
 - (void)logoutFailedWithError:(NSString *)error {
     //注销deviceToken 失败也要退回到登陆界面
     [[NSNotificationCenter defaultCenter] postNotificationName:IMLogoutNotification object:nil];
-    
 }
 
 - (void)loginStatusDidUpdate:(IMMyselfLoginStatus)status {
@@ -199,35 +229,15 @@
 }
 
 - (void)didReceiveText:(NSString *)text fromCustomUserID:(NSString *)customUserID serverSendTime:(UInt32)timeIntervalSince1970 {
-    
-    if (![[g_pIMSDKManager recentChatObjects] containsObject:customUserID]) {
-        NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-        NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
-        
-        if (!sound) {
-            sound = [NSNumber numberWithBool:YES];
-            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
-            [userDefault synchronize];
-        }
-        
-        if ([sound boolValue]) {
-            AudioServicesPlayAlertSound(1015);
-        }
-        
-        NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
-        
-        if (!shake) {
-            shake = [NSNumber numberWithBool:YES];
-            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
-            [userDefault synchronize];
-        }
-        
-        if ([shake boolValue]) {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-        }
-        
-    }
-    
+    [self receiveNewUserMessage:customUserID];
+}
+
+- (void)didReceiveAudioData:(NSData *)data fromCustomUserID:(NSString *)customUserID serverSendTime:(UInt32)timeIntervalSince1970 {
+    [self receiveNewUserMessage:customUserID];
+}
+
+- (void)didReceivePhoto:(UIImage *)photo fromCustomUserID:(NSString *)customUserID serverSendTime:(UInt32)timeIntervalSince1970 {
+    [self receiveNewUserMessage:customUserID];
 }
 
 - (void)failedToSendText:(NSString *)text toGroup:(NSString *)groupID clientSendTime:(UInt32)timeIntervalSince1970 error:(NSString *)error {

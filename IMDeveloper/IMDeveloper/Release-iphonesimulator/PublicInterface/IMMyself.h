@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <UIKit/UIKit.h>
 
 /**
  @enum
@@ -102,6 +104,45 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 - (void)didReceiveText:(NSString *)text
       fromCustomUserID:(NSString *)customUserID
         serverSendTime:(UInt32)timeIntervalSince1970;
+
+
+#pragma mark 用户间语音消息
+/**
+ @method
+ @brief 接收到用户间语音消息的回调方法
+ @param data                  语音消息数据内容（格式为iLBC）
+ @param customUserID          发送方的用户名
+ @param timeIntervalSince1970 1970年到服务端发送文本消息时间的秒数
+ */
+- (void)didReceiveAudioData:(NSData *)data
+           fromCustomUserID:(NSString *)customUserID
+             serverSendTime:(UInt32)timeIntervalSince1970;
+
+#pragma mark 用户间图片消息
+/**
+ @method
+ @brief 接收到用户间图片消息的回调方法
+ @param photo                 收到的图片
+ @param customUserID          发送方的用户名
+ @param timeIntervalSince1970 1970年到服务端发送文本消息时间的秒数
+ */
+- (void)didReceivePhoto:(UIImage *)photo
+       fromCustomUserID:(NSString *)customUserID
+         serverSendTime:(UInt32)timeIntervalSince1970;
+
+
+#pragma mark 用户间图片消息进度
+/**
+ @method
+ @brief 接收用户间图片消息进度的回调方法
+ @param progress              取值范围为 0-1 -- (0, 1]
+ @param customUserID          发送方的用户名
+ @param timeIntervalSince1970 1970年到服务端发送文本消息时间的秒数
+ */
+- (void)didReceivePhotoProgress:(CGFloat)progress
+               fromCustomUserID:(NSString *)customUserID
+                 serverSendTime:(UInt32)timeIntervalSince1970;
+
 
 #pragma mark 系统消息
 
@@ -202,7 +243,7 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
  @param error                 登录失败的错误信息
  */
 - (void)loginOnSuccess:(void (^)(BOOL autoLogin))success
-                 failure:(void (^)(NSString *error))failure;
+               failure:(void (^)(NSString *error))failure;
 
 /**
  @method
@@ -242,7 +283,7 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
  @param error                 注销失败的错误信息
  */
 - (void)logoutOnSuccess:(void (^)(NSString *reason))success
-                  failure:(void (^)(NSString *error))failure;
+                failure:(void (^)(NSString *error))failure;
 
 
 #pragma mark - 发送文本消息
@@ -261,14 +302,26 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
  @param text                  文本消息内容
  @param customUserID          接收方的用户名
  @param success               发送文本消息成功的block回调
- @param resultDictionary      发送文本消息成功的block回调的返回参数，字典类型,包含文本消息内容，接收方用户名，发送时间等。
  @param failure               发送文本消息失败的block回调
- @param requestDictionary     发送文本消息失败的block回调的返回参数，字典类型,包含文本消息内容，接收方用户名，发送时间等。
  @param error                 发送文本消息失败的错误信息
  */
-- (UInt32)sendText:(NSString *)text toUser:(NSString *)customUserID
+- (UInt32)sendText:(NSString *)text
+            toUser:(NSString *)customUserID
            success:(void (^)())success
            failure:(void (^)(NSString *error))failure;
+
+- (BOOL)beginRecordAudioMessageToUser:(NSString *)customUserID;
+- (UInt32)stopRecordAudioMessageToUser:(NSString *)customUserID
+                              needSend:(BOOL)needSend
+                               success:(void (^)())success
+                              progress:(void(^)(CGFloat progress))progress
+                               failure:(void (^)(NSString *error))failure;
+
+- (UInt32)sendPhoto:(UIImage *)photo
+             toUser:(NSString *)customUserID
+            success:(void (^)())success
+           progress:(void(^)(CGFloat progress))progress
+            failure:(void (^)(NSString *error))failure;
 
 @end
 

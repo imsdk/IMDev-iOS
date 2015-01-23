@@ -53,6 +53,7 @@
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMGroupListDidInitializeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMRelationshipDidInitializeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMReceiveUserMessageNotification object:nil];
     }
     return self;
 }
@@ -143,6 +144,17 @@
     
     [_recentContactsView reloadData];
     [_recentGroupsView reloadData];
+    [self setBadge];
+}
+
+- (void)setBadge {
+    NSInteger unreadCount = [g_pIMMyself unreadChatMessageCount];
+    
+    if (unreadCount) {
+        [[self tabBarItem] setBadgeValue:[NSString stringWithFormat:@"%ld",(long)unreadCount]];
+    } else {
+        [[self tabBarItem] setBadgeValue:nil];
+    }
 }
 
 
@@ -160,6 +172,9 @@
         [alertView show];
         return;
     }
+    
+    [g_pIMMyself clearUnreadChatMessageWithUser:customUserID];
+    [self setBadge];
     
     IMUserDialogViewController *controller = [[IMUserDialogViewController alloc] init];
     

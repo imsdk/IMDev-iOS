@@ -170,7 +170,7 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
 /**
  聊天界面的父视图控制器
  */
-@property (nonatomic, weak)UIViewController *parentController;
+@property (nonatomic, weak) UIViewController *parentController;
 
 @property (nonatomic, assign) BOOL showHeadView;
 

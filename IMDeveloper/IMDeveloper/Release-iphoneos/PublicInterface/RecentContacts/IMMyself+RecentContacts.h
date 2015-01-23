@@ -7,6 +7,7 @@
 //
 
 #import "IMMyself.h"
+#import "IMUserChatMessage.h"
 
 /**
  @header IMMyself+RecentContacts
@@ -26,6 +27,20 @@
  @brief 从最近联系人中移除某个用户（本地移除）
  @param customUserID 移除对象的用户名
  */
-- (void)removeRecentContact:(NSString *)customUserID;
+- (BOOL)removeRecentContact:(NSString *)customUserID;
+
+- (NSInteger)chatMessageCountWithUser:(NSString *)customUserID;
+
+- (IMUserChatMessage *)chatMessageWithUser:(NSString *)customUserID index:(NSInteger)index;
+
+- (NSInteger)unreadChatMessageCount;
+
+- (NSInteger)unreadChatMessageCountWithUser:(NSString *)customUserID;
+
+- (BOOL)clearUnreadChatMessage;
+
+- (BOOL)clearUnreadChatMessageWithUser:(NSString *)customUserID;
+
+- (NSString *)lastErrorForRecentContacts;
 
 @end

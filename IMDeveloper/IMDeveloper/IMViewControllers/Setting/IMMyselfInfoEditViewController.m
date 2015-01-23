@@ -159,11 +159,11 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
 
     if (_type == 2) {
-        if ([[textView text] length] + [text length] > 12 ) {
+        if ([[textView text] length] + [text length] > 20 ) {
             return NO;
         }
     } else if(_type == 3) {
-        if ([[textView text] length] + [text length] > 25 ) {
+        if ([[textView text] length] + [text length] > 50 ) {
             return NO;
         }
     }

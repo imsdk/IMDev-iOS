@@ -10,7 +10,7 @@
 
 /**
  @protocol 
- @brief 提交自定义用户信息协议
+ @brief 提交自定义用户信息
  @discussion IMMyself+CustomUserInfo类别中的方法，无论是否带block方法，只要注册接收回调的对象到customUserInfoDelegate中，就能监听到回调方法。
  */
 @protocol IMCustomUserInfoDelegate <NSObject>
