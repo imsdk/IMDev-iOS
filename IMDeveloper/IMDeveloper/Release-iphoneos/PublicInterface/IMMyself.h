@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
     IMMyselfLoginStatusNone = 0,        // 未登录
     IMMyselfLoginStatusLogining = 1,    // 用户发起登录
     IMMyselfLoginStatusRelogining = 2,  // 断线重连
-    IMMyselfLoginStatusLogouting = 3,   // 用户发起注销
+    IMMyselfLoginStatusLogouting = 3,   // 用户发起退出登录
     IMMyselfLoginStatusLogined = 11,    // 已登录
 };
 
@@ -219,44 +219,43 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 @property (nonatomic, assign) BOOL autoLogin;
 
 
+#pragma mark - 注册
+
+/**
+ @method
+ @brief 注册接口 （异步方法）
+ @param timeoutInterval       注册超时时间
+ @param success               注册成功的block回调
+ @param failure               注册失败的block回调
+ @param error                 注册失败的错误信息
+ */
+- (UInt32)registerWithTimeoutInterval:(UInt32)timeoutInterval
+                              success:(void (^)())success
+                              failure:(void (^)(NSString *error))failure;
+
 #pragma mark - 登录
 
 /**
  @method
  @brief 登录接口 （异步方法）
  */
-- (void)login;
+- (UInt32)login;
 
 /**
  @method
  @brief 登录接口 （异步方法）
- @param timeoutInterval 登录超时时间
- */
-- (void)loginWithTimeoutInterval:(UInt32)timeoutInterval;
-
-/**
- @method
- @brief 登录接口 （异步方法）
- @param success               登录成功的block回调
- @param autoLogin             是否自动登录
- @param failure               登录失败的block回调
- @param error                 登录失败的错误信息
- */
-- (void)loginOnSuccess:(void (^)(BOOL autoLogin))success
-               failure:(void (^)(NSString *error))failure;
-
-/**
- @method
- @brief 登录接口 （异步方法）
+ @param autoRegister          自动注册
  @param timeoutInterval       登录超时时间
  @param success               登录成功的block回调
  @param autoLogin             是否自动登录
  @param failure               登录失败的block回调
  @param error                 登录失败的错误信息
  */
-- (void)loginWithTimeoutInterval:(UInt32)timeoutInterval
-                         success:(void (^)(BOOL autoLogin))success
-                         failure:(void (^)(NSString *error))failure;
+- (UInt32)loginWithAutoRegister:(BOOL)autoRegister
+                timeoutInterval:(UInt32)timeoutInterval
+                        success:(void (^)(BOOL autoLogin))success
+                        failure:(void (^)(NSString *error))failure;
+
 
 /**
  @property
@@ -310,12 +309,12 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
            success:(void (^)())success
            failure:(void (^)(NSString *error))failure;
 
-- (BOOL)beginRecordAudioMessageToUser:(NSString *)customUserID;
-- (UInt32)stopRecordAudioMessageToUser:(NSString *)customUserID
-                              needSend:(BOOL)needSend
-                               success:(void (^)())success
-                              progress:(void(^)(CGFloat progress))progress
-                               failure:(void (^)(NSString *error))failure;
+- (BOOL)beginRecordingToUser:(NSString *)customUserID;
+- (UInt32)stopRecordingToUser:(NSString *)customUserID
+                     needSend:(BOOL)needSend
+                      success:(void (^)())success
+                     progress:(void(^)(CGFloat progress))progress
+                      failure:(void (^)(NSString *error))failure;
 
 - (UInt32)sendPhoto:(UIImage *)photo
              toUser:(NSString *)customUserID

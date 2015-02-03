@@ -83,8 +83,7 @@
     [view setMicHighLightImage:[UIImage imageNamed:@"IM_mic_normal.png"]];
     [view setMicNormalImage:[UIImage imageNamed:@"IM_mic_normal.png"]];
     [view setInputViewTintColor:RGB(245, 245, 245)];
-    [view setSenderTintColor:RGB(44, 164, 232)];
-    [view setReceiverTintColor:[UIColor lightGrayColor]];
+    [view setBackgroundColor:RGB(237, 237, 237)];
     [view setParentController:self];
     [view setDelegate:self];
     [[self view] addSubview:view];

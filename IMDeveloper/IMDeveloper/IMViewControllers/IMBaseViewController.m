@@ -58,14 +58,15 @@
     
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
         // Load resources for iOS 6.1 or earlier
-        self.navigationController.navigationBar.tintColor = RGB(44, 164, 232);
+        self.navigationController.navigationBar.tintColor = RGB(44, 44, 44);
     }
     else {
         // Load resources for iOS 7 or later
-        self.navigationController.navigationBar.barTintColor = RGB(44, 164, 232);
+        self.navigationController.navigationBar.barTintColor = RGB(44, 44, 44);
         [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     }
+    
     
 }
 

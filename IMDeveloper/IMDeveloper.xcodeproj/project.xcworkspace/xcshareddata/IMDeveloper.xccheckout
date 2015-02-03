@@ -14,22 +14,26 @@
 		<string>github.com:imsdk/IMDev-iOS.git</string>
 		<key>8DD8BB404B17AD0202BABB83445E4B4296495225</key>
 		<string>github.com:guowx/IMDeveloper.git</string>
+		<key>B09A2FA61922C6F0B7C5991E8E0F44067CEB4EDF</key>
+		<string>lyc.local:/../../Volumes/HARD3/gitserver/IMSDK_iOS</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>IMDeveloper/IMDeveloper.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>0FF7C003E9E9DF970537A70427617A12A4962501</key>
-		<string>../../..</string>
+		<string>../../../../IMDev-iOS</string>
 		<key>8DD8BB404B17AD0202BABB83445E4B4296495225</key>
 		<string>../../../../IMDeveloper</string>
+		<key>B09A2FA61922C6F0B7C5991E8E0F44067CEB4EDF</key>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>github.com:imsdk/IMDev-iOS.git</string>
+	<string>lyc.local:/../../Volumes/HARD3/gitserver/IMSDK_iOS</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>0FF7C003E9E9DF970537A70427617A12A4962501</string>
+	<string>B09A2FA61922C6F0B7C5991E8E0F44067CEB4EDF</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -47,6 +51,14 @@
 			<string>8DD8BB404B17AD0202BABB83445E4B4296495225</string>
 			<key>IDESourceControlWCCName</key>
 			<string>IMDeveloper</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B09A2FA61922C6F0B7C5991E8E0F44067CEB4EDF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>IMSDK_iOS</string>
 		</dict>
 	</array>
 </dict>

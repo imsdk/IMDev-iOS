@@ -57,13 +57,13 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
 
 /**
  发送气泡背景色
- 默认为蓝色
+ 默认为RGB(144, 228, 71)
  */
 @property (nonatomic, strong) UIColor *senderTintColor;
 
 /**
  接收气泡背景色
- 默认为灰色
+ 默认为白色
  */
 @property (nonatomic, strong) UIColor *receiverTintColor;
 

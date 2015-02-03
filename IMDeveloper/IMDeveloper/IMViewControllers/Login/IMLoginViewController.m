@@ -118,7 +118,6 @@
     
     _loginBtn = [[UIButton alloc] initWithFrame:CGRectMake(40, line2.bottom + 60, 240, 50)];
     
-    [_loginBtn setBackgroundColor:[UIColor clearColor]];
     [_loginBtn setBackgroundImage:[UIImage imageNamed:@"IM_loginBtn_background.png"] forState:UIControlStateNormal];
     [_loginBtn setTitle:@"登录" forState:UIControlStateNormal];
     [[_loginBtn titleLabel] setFont:[UIFont boldSystemFontOfSize:18]];
@@ -144,6 +143,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
     
     NSMutableString *customUserID = [[NSMutableString alloc] initWithFormat:@"%@",[_userNameField text]];
     
@@ -185,43 +186,39 @@
         
         [g_pIMMyself setPassword:password];
         [g_pIMMyself setAutoLogin:NO];
-        [g_pIMMyself loginWithTimeoutInterval:10
-                                      success:^(BOOL autoLogin) {
-                                          IMRootViewController *controller = [[IMRootViewController alloc] init];
-                                          
-                                          [self addChildViewController:controller];
-                                          [[self view] addSubview:controller.view];
-                                          
-                                          [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:IMLastLoginTime];
-                                          [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself customUserID] forKey:IMLoginCustomUserID];
-                                          [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself password] forKey:IMLoginPassword];
-                                          [[NSUserDefaults standardUserDefaults] synchronize];
-                                          
-                                          //应用角标清零
-                                          [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-                                          
-                                          [_countdownView removeFromSuperview];
-                                          _countdownView = nil;
-                                          
-                                          [_passwordField setText:nil];
-                                          [[self view] endEditing:YES];
-                                      }
-                                      failure:^(NSString *error) {
-                                          
-                                          if ([error isEqualToString:@"Wrong Password"]) {
-                                              error = @"密码错误,请重新输入";
-                                          } else if ([error isEqualToString:@"customUserID should be only built by letters, Numbers, underscores, or '@''.',and the length between 2 to 32 characters"]){
-                                              error = @"用户名只能由字母、数字、下划线、@符或点组成,长度不能超过32位，也不能少于2位";
-                                          } else if ([error isEqualToString:@"Password length should between 2 to 32 characters"]) {
-                                              error = @"密码长度不能超过32位，也不能少于2位";
-                                          } else {
-                                              error = @"请检查网络是否可用";
-                                          }
-                                          
-                                          [self performSelector:@selector(loginError:) withObject:error afterDelay:1.0];
-                                          
-                                          
-                                      }];
+        
+        [g_pIMMyself loginWithAutoRegister:YES timeoutInterval:10 success:^(BOOL autoLogin) {
+            IMRootViewController *controller = [[IMRootViewController alloc] init];
+            
+            [self addChildViewController:controller];
+            [[self view] addSubview:controller.view];
+            
+            [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:IMLastLoginTime];
+            [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself customUserID] forKey:IMLoginCustomUserID];
+            [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself password] forKey:IMLoginPassword];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
+            //应用角标清零
+            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+            
+            [_countdownView removeFromSuperview];
+            _countdownView = nil;
+            
+            [_passwordField setText:nil];
+            [[self view] endEditing:YES];
+        } failure:^(NSString *error) {
+            if ([error isEqualToString:@"Wrong Password"]) {
+                error = @"密码错误,请重新输入";
+            } else if ([error isEqualToString:@"customUserID should be only built by letters, Numbers, underscores, or '@''.',and the length between 2 to 32 characters"]){
+                error = @"用户名只能由字母、数字、下划线、@符或点组成,长度不能超过32位，也不能少于2位";
+            } else if ([error isEqualToString:@"Password length should between 2 to 32 characters"]) {
+                error = @"密码长度不能超过32位，也不能少于2位";
+            } else {
+                error = @"请检查网络是否可用";
+            }
+            
+            [self performSelector:@selector(loginError:) withObject:error afterDelay:1.0];
+        }];
         
         _countdownView = [[SFCountdownView alloc] initWithFrame:[self view].bounds];
         
@@ -236,7 +233,7 @@
 }
 
 - (void)logout {
-    
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
 - (void)loginError:(NSString *)error {

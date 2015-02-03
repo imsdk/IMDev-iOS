@@ -78,11 +78,13 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:IMLoginStatusChangedNotification object:nil];
         
         //check login status
-        if ([g_pIMMyself loginStatus] == IMMyselfLoginStatusNone) {
+        if ([g_pIMMyself loginStatus] == IMMyselfLoginStatusNone && [g_pIMMyself customUserID] == nil) {
+            
             [g_pIMMyself initWithCustomUserID:loginCustomUserID appKey:IMDeveloper_APPKey];
+            
             [g_pIMMyself setPassword:loginPassword];
-            [g_pIMMyself setAutoLogin:NO];
-            [g_pIMMyself loginWithTimeoutInterval:10 success:^(BOOL autoLogin) {
+            [g_pIMMyself setAutoLogin:YES];
+            [g_pIMMyself loginWithAutoRegister:YES timeoutInterval:10 success:^(BOOL autoLogin) {
                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:IMLastLoginTime];
                 [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself customUserID] forKey:IMLoginCustomUserID];
                 [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself password] forKey:IMLoginPassword];

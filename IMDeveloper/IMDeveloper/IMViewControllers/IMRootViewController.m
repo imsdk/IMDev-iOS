@@ -192,31 +192,6 @@
         return;
     }
     
-    [self trylogin];
-    
-}
-
-- (void)trylogin {
-    NSString *loginCustomUserID = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginCustomUserID];
-    NSString *loginPassword = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginPassword];
-    
-    if (![[g_pIMMyself customUserID] isEqualToString:loginCustomUserID]) {
-        /*
-         it is important! if you call method "initWithCustomUserID:appKey:",All IMMyself Delegates will reinit;
-         so if customUserID didn't change,don't call this method;
-        */
-        [g_pIMMyself initWithCustomUserID:loginCustomUserID appKey:IMDeveloper_APPKey];
-    }
-    
-    [g_pIMMyself setPassword:loginPassword];
-    [g_pIMMyself loginWithTimeoutInterval:10 success:^(BOOL autoLogin) {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:IMLastLoginTime];
-        [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself customUserID] forKey:IMLoginCustomUserID];
-        [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself password] forKey:IMLoginPassword];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    } failure:^(NSString *error) {
-        [self trylogin];
-    }];
 }
 
 - (void)logoutFailedWithError:(NSString *)error {
