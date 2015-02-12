@@ -199,7 +199,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:IMLogoutNotification object:nil];
 }
 
-- (void)loginStatusDidUpdate:(IMMyselfLoginStatus)status {
+- (void)loginStatusDidUpdateForOldStatus:(IMMyselfLoginStatus)oldStatus newStatus:(IMMyselfLoginStatus)newStatus {
     [[NSNotificationCenter defaultCenter] postNotificationName:IMLoginStatusChangedNotification object:nil];
 }
 
@@ -280,34 +280,32 @@
 }
 
 - (void)didReceiveText:(NSString *)text fromGroup:(NSString *)groupID fromUser:(NSString *)customUserID serverSendTime:(UInt32)timeIntervalSince1970 {
-    if (![[g_pIMSDKManager recentChatObjects] containsObject:groupID]) {
-        NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-        NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
-        
-        if (!sound) {
-            sound = [NSNumber numberWithBool:YES];
-            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
-            [userDefault synchronize];
-        }
-        
-        if ([sound boolValue]) {
-            AudioServicesPlayAlertSound(1015);
-        }
-        
-        NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
-        
-        if (!shake) {
-            shake = [NSNumber numberWithBool:YES];
-            [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
-            [userDefault synchronize];
-        }
-        
-        if ([shake boolValue]) {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-        }
-        
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+    
+    if (!sound) {
+        sound = [NSNumber numberWithBool:YES];
+        [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+        [userDefault synchronize];
     }
-
+    
+    if ([sound boolValue]) {
+        AudioServicesPlayAlertSound(1015);
+    }
+    
+    NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+    
+    if (!shake) {
+        shake = [NSNumber numberWithBool:YES];
+        [userDefault setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+        [userDefault synchronize];
+    }
+    
+    if ([shake boolValue]) {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    }
+    
 }
 
 

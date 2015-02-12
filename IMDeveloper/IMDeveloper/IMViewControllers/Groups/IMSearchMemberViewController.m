@@ -253,8 +253,8 @@
         _notify = nil;
     }
     
-    [self.tabBarController.view addSubview:[self notify]];
-    [[self notify] presentWithDuration:1.0f speed:0.5f inView:self.tabBarController.view completion:^{
+    [self.view addSubview:[self notify]];
+    [[self notify] presentWithDuration:1.0f speed:0.5f inView:self.view completion:^{
         [[self notify] removeFromSuperview];
     }];
 }

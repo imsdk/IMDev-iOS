@@ -63,7 +63,6 @@
         [_titleLabel setText:@"详细资料"];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadData) name:IMRelationshipDidInitializeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadData) name:IMReloadFriendlistNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadData) name:IMReloadFriendlistNotification object:nil];
     }
     return self;
 }

@@ -15,11 +15,17 @@
  @brief 登录状态
  */
 typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
+    // 未登录
     IMMyselfLoginStatusNone = 0,        // 未登录
     IMMyselfLoginStatusLogining = 1,    // 用户发起登录
-    IMMyselfLoginStatusRelogining = 2,  // 断线重连
-    IMMyselfLoginStatusLogouting = 3,   // 用户发起退出登录
+    IMMyselfLoginStatusReconnecting = 2,  // 断线重连
+    IMMyselfLoginStatusAutoLogining = 4,  // 自动登录
+    // 未登录 end
+    
+    // 已登录
+    IMMyselfLoginStatusLogouting = 10,   // 用户发起退出登录
     IMMyselfLoginStatusLogined = 11,    // 已登录
+    // 已登录 end
 };
 
 /**
@@ -36,14 +42,14 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 
 /**
  @method
- @brief 登录成功回调方法
+ @brief 登录成功 的回调方法
  @param autoLogin 是否是自动登录
  */
 - (void)didLogin:(BOOL)autoLogin;
 
 /**
  @method
- @brief 登录失败回调方法
+ @brief 登录失败 的回调方法
  @param error 登录失败的错误信息
  */
 - (void)loginFailedWithError:(NSString *)error;
@@ -53,19 +59,28 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 
 /**
  @method
- @brief 注销成功回调方法
+ @brief 退出登录成功 的回调方法
  @param reason 注销原因
  */
 - (void)didLogoutFor:(NSString *)reason;
 
 /**
  @method
- @brief 注销失败回调方法
- @param error 注销失败的错误信息
+ @brief 退出登录失败 的回调方法
+ @param error 退出登录失败的错误信息
  */
 - (void)logoutFailedWithError:(NSString *)error;
 
-- (void)loginStatusDidUpdate:(IMMyselfLoginStatus)status;
+- (void)didLoseConnection;
+
+- (void)didReconnect;
+
+/**
+ @method
+ @brief 登录状态更新 的回调方法
+ @param status
+ */
+- (void)loginStatusDidUpdateForOldStatus:(IMMyselfLoginStatus)oldStatus newStatus:(IMMyselfLoginStatus)newStatus;
 
 
 #pragma mark 发送文本消息回调
@@ -271,18 +286,17 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
  @brief 注销接口 （异步方法）
  @discussion 注销将会自动将IMSDK对应当前用户的deviceToken清空，注销后用户收不到来自IMSDK的推送消息，注销可能需要少许时间
  */
-- (void)logout;
+- (UInt32)logout;
 
 /**
  @method
- @brief 注销接口 （异步方法）
- @param success               注销成功的block回调
- @param resaon                注销原因
- @param failure               注销失败的block回调
- @param error                 注销失败的错误信息
+ @brief 退出登录接口 （异步方法）
+ @param success               退出登录成功的block回调
+ @param failure               退出登录失败的block回调
+ @param error                 退出登录失败的错误信息
  */
-- (void)logoutOnSuccess:(void (^)(NSString *reason))success
-                failure:(void (^)(NSString *error))failure;
+- (UInt32)logoutOnSuccess:(void (^)())success
+                  failure:(void (^)(NSString *error))failure;
 
 
 #pragma mark - 发送文本消息
@@ -308,6 +322,18 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
             toUser:(NSString *)customUserID
            success:(void (^)())success
            failure:(void (^)(NSString *error))failure;
+
+/**
+ @method
+ @brief 向IMSDK服务器发送文本消息 （异步方法，可在IMSDK.im开发者中心查看）
+ @param text                  文本消息内容
+ @param success               发送文本消息成功的block回调
+ @param failure               发送文本消息失败的block回调
+ @param error                 发送文本消息失败的错误信息
+ */
+- (UInt32)sendTextToServer:(NSString *)text
+                   success:(void (^)())success
+                   failure:(void (^)(NSString *error))failure;
 
 - (BOOL)beginRecordingToUser:(NSString *)customUserID;
 - (UInt32)stopRecordingToUser:(NSString *)customUserID

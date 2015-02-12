@@ -128,12 +128,13 @@
             [_titleLabel setText:@"消息(未连接)"];
         }
             break;
+        case IMMyselfLoginStatusAutoLogining:
         case IMMyselfLoginStatusLogining:
         {
-            [_titleLabel setText:@"正在获取..."];
+            [_titleLabel setText:@"连接中..."];
         }
             break;
-        case IMMyselfLoginStatusRelogining:
+        case IMMyselfLoginStatusReconnecting:
         {
             [_titleLabel setText:@"正在重连..."];
         }

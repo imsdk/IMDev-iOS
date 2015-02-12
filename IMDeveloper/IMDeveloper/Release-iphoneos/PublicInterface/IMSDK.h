@@ -44,6 +44,18 @@
  */
 + (id)sharedInstance;
 
+/**
+ @method
+ @brief 程序已进入后台
+ */
+- (void)applicationDidEnterBackground;
+
+/**
+ @method
+ @brief 程序已加载完成
+ */
+- (void)applicationDidFinishLaunching;
+
 @end
 
 #define g_pIMSDK [IMSDK sharedInstance]

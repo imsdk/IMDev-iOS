@@ -24,6 +24,7 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
+    [g_pIMSDK applicationDidFinishLaunching];
     
     IMLoginViewController *controller = [[IMLoginViewController alloc] init] ;
         
@@ -60,6 +61,8 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
+    [g_pIMSDK applicationDidEnterBackground];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -70,32 +73,32 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    NSString *loginCustomUserID = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginCustomUserID];
-    NSString *loginPassword = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginPassword];
-    
-    if (loginCustomUserID && loginPassword) {
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:IMLoginStatusChangedNotification object:nil];
-        
-        //check login status
-        if ([g_pIMMyself loginStatus] == IMMyselfLoginStatusNone && [g_pIMMyself customUserID] == nil) {
-            
-            [g_pIMMyself initWithCustomUserID:loginCustomUserID appKey:IMDeveloper_APPKey];
-            
-            [g_pIMMyself setPassword:loginPassword];
-            [g_pIMMyself setAutoLogin:YES];
-            [g_pIMMyself loginWithAutoRegister:YES timeoutInterval:10 success:^(BOOL autoLogin) {
-                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:IMLastLoginTime];
-                [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself customUserID] forKey:IMLoginCustomUserID];
-                [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself password] forKey:IMLoginPassword];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-            } failure:^(NSString *error) {
-                
-            }];
-        }
-        
-        return;
-    }
+//    NSString *loginCustomUserID = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginCustomUserID];
+//    NSString *loginPassword = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginPassword];
+//    
+//    if (loginCustomUserID && loginPassword) {
+//
+//        [[NSNotificationCenter defaultCenter] postNotificationName:IMLoginStatusChangedNotification object:nil];
+//        
+//        //check login status
+//        if ([g_pIMMyself loginStatus] == IMMyselfLoginStatusNone && [g_pIMMyself customUserID] == nil) {
+//            
+//            [g_pIMMyself initWithCustomUserID:loginCustomUserID appKey:IMDeveloper_APPKey];
+//            
+//            [g_pIMMyself setPassword:loginPassword];
+//            [g_pIMMyself setAutoLogin:YES];
+//            [g_pIMMyself loginWithAutoRegister:YES timeoutInterval:10 success:^(BOOL autoLogin) {
+//                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:IMLastLoginTime];
+//                [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself customUserID] forKey:IMLoginCustomUserID];
+//                [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself password] forKey:IMLoginPassword];
+//                [[NSUserDefaults standardUserDefaults] synchronize];
+//            } failure:^(NSString *error) {
+//                
+//            }];
+//        }
+//        
+//        return;
+//    }
 
 }
 
@@ -109,7 +112,7 @@
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    
+    NSLog(@"failed to register for remote notifications with error: %@",error);
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {

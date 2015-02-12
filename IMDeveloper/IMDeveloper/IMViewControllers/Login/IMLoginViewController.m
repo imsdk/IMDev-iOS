@@ -185,7 +185,6 @@
         [g_pIMMyself initWithCustomUserID:customUserID appKey:IMDeveloper_APPKey];
         
         [g_pIMMyself setPassword:password];
-        [g_pIMMyself setAutoLogin:NO];
         
         [g_pIMMyself loginWithAutoRegister:YES timeoutInterval:10 success:^(BOOL autoLogin) {
             IMRootViewController *controller = [[IMRootViewController alloc] init];

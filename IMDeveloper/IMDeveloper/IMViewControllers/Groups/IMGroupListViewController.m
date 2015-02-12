@@ -13,6 +13,10 @@
 #import "IMGroupDialogViewController.h"
 #import "IMCreateGroupViewController.h"
 
+#import "POAPinyin.h"
+#import "pinyin.h"
+#import "NSString+IM.h"
+
 //IMSDK Headers
 #import "IMGroupInfo.h"
 #import "IMSDK+Group.h"
@@ -124,15 +128,21 @@
     [_groupList removeAllObjects];
     NSArray *array = [g_pIMMyself myGroupList];
     
+    NSMutableArray *groups = [[NSMutableArray alloc] initWithCapacity:32];
+    
     for (NSString *groupID in array) {
         IMGroupInfo *info = [g_pIMSDK groupInfoWithGroupID:groupID];
         
         [info setDelegate:self];
         
         if (info) {
-            [_groupList addObject:info];
+            [groups addObject:info];
         }
     }
+    
+    groups = (NSMutableArray *)[groups sortedArrayUsingFunction:GroupArray_sortByPinyin context:nil];
+    
+    [_groupList addObjectsFromArray:groups];
     
     if (![g_pIMMyself groupInitialized] && [g_pIMMyself loginStatus] == IMMyselfLoginStatusLogined) {
         [_totalNumLabel setText:@"正在获取群组列表..."];
@@ -148,6 +158,13 @@
     }
     
     [_tableView reloadData];
+}
+
+NSInteger GroupArray_sortByPinyin(IMGroupInfo *info1, IMGroupInfo *info2, void *keyForSorting){
+    
+    //    return [[[string1 pinYin] uppercaseString] compare:[[string2 pinYin] uppercaseString] ];
+    
+    return [info1.groupName localizedCompare:info2.groupName];
 }
 
 - (void)reloadData {

@@ -153,7 +153,7 @@
         [_hud setLabelText:@"正在注销..."];
         [_hud show:YES];
         
-        [g_pIMMyself logoutOnSuccess:^(NSString *reason) {
+        [g_pIMMyself logoutOnSuccess:^() {
             [_hud hide:YES];
             [_hud removeFromSuperview];
             _hud = nil;

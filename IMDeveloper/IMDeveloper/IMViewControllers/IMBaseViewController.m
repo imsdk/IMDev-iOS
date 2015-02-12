@@ -64,10 +64,17 @@
         // Load resources for iOS 7 or later
         self.navigationController.navigationBar.barTintColor = RGB(44, 44, 44);
         [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+        
     }
     
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] > 6.9) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    }
 }
 
 - (void)setAutomaticallyAdjustsScrollViewInsets:(BOOL)flag {

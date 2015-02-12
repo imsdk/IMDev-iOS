@@ -64,6 +64,8 @@
 }
 
 - (void)rightBarButtonItemClick {
+    [[self view] endEditing:YES];
+    
     if ([[_textField text] length] == 0) {
         _notifyText = @"请填写群名称";
         _notifyImage = [UIImage imageNamed:@"IM_alert_image.png"];
@@ -78,11 +80,15 @@
     }
     _hud = [[MBProgressHUD alloc] initWithView:[self view]];
     
-    [[self view] addSubview:_hud];
+    [[self navigationController].view addSubview:_hud];
     [_hud setLabelText:@"请稍候..."];
     [_hud show:YES];
     
     [g_pIMMyself createGroupWithName:[_textField text] success:^(NSString *groupID) {
+        [_hud hide:YES];
+        [_hud removeFromSuperview];
+        _hud = nil;
+        
         _notifyText = @"创建群组成功";
         _notifyImage = [UIImage imageNamed:@"IM_success_image.png"];
         [self displayNotifyHUD];
@@ -97,8 +103,12 @@
         [[self navigationController] popViewControllerAnimated:YES];
 
     } failure:^(NSString *error) {
+        [_hud hide:YES];
+        [_hud removeFromSuperview];
+        _hud = nil;
+        
         if ([error isEqualToString:@"You have already found a group." ]) {
-            error = @"你已经创建了一个群";
+            error = @"你当前已创建过一个群，已达到上限";
         } else {
             error = @"创建群组失败";
         }

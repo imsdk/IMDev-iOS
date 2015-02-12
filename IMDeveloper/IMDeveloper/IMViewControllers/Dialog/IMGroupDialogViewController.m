@@ -89,8 +89,6 @@
     [_groupChatView setMicHighLightImage:[UIImage imageNamed:@"IM_mic_normal.png"]];
     [_groupChatView setMicNormalImage:[UIImage imageNamed:@"IM_mic_normal.png"]];
     [_groupChatView setInputViewTintColor:RGB(245, 245, 245)];
-    [_groupChatView setSenderTintColor:RGB(44, 164, 232)];
-    [_groupChatView setReceiverTintColor:[UIColor lightGrayColor]];
     [self showGroupMemberName:nil];
     [_groupChatView setParentController:self];
     [_groupChatView setDelegate:self];

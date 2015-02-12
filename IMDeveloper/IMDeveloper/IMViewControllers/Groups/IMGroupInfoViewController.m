@@ -20,6 +20,7 @@
 #import "IMMyself.h"
 #import "IMMyself+Group.h"
 #import "IMSDK+Group.h"
+#import "IMMyself+RecentGroups.h"
 
 @interface IMGroupInfoViewController ()<UITableViewDataSource, UITableViewDelegate, IMGroupMemberHeadersViewDelegate, IMGroupInfoEditDelegate, IMGroupInfoUpdateDelegate, UIActionSheetDelegate>
 
@@ -331,6 +332,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    
     if ([indexPath section] == 0 || [indexPath section] == 2 || [indexPath row] > 1) {
         return;
     } else if([indexPath section] == 3) {
@@ -348,6 +351,10 @@
         [actionSheet showFromTabBar:[self tabBarController].tabBar];
         return;
     } else {
+        if ([cell accessoryType] == UITableViewCellAccessoryNone) {
+            return;
+        }
+        
         IMGroupInfoEditViewController *controller = [[IMGroupInfoEditViewController alloc] init];
         
         if ([indexPath row] == 0) {
@@ -400,6 +407,9 @@
                         return ;
                     }
                 }
+                
+                [g_pIMMyself removeRecentGroup:[_groupInfo groupID]];
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadGroupListNotification object:nil];
                 
                 [[self navigationController] popToRootViewControllerAnimated:YES];
@@ -420,6 +430,8 @@
                         return ;
                     }
                 }
+                [g_pIMMyself removeRecentGroup:[_groupInfo groupID]];
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadGroupListNotification object:nil];
                 
                 [[self navigationController] popToRootViewControllerAnimated:YES];

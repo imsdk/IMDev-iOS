@@ -16,6 +16,9 @@
 #import "IMGroupListViewController.h"
 #import "IMSearchMemberViewController.h"
 
+#import "pinyin.h"
+#import "POAPinyin.h"
+
 //IMSDK Headers
 #import "IMMyself+Relationship.h"
 #import "IMSDK+MainPhoto.h"
@@ -35,6 +38,7 @@
     NSMutableArray *_friendList;
     NSMutableArray *_searchResult;
     NSMutableArray *_friendTitles;
+    NSMutableDictionary *_sectionDic;
     NSIndexPath *_lastIndex;
     NSString *_selectedCustomUserID;
     
@@ -55,6 +59,7 @@
         // Custom initialization        
         _friendTitles = [[NSMutableArray alloc] initWithCapacity:32];
         _searchResult = [[NSMutableArray alloc] initWithCapacity:32];
+        _sectionDic = [[NSMutableDictionary alloc] initWithCapacity:32];
         
         //notifications
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMReloadFriendlistNotification object:nil];
@@ -116,7 +121,11 @@
     if ([_friendList count] > 0) {
         [_totalNumLabel setText:[NSString stringWithFormat:@"%lu位联系人",(unsigned long)[_friendList count]]];
     } else {
-        [_totalNumLabel setText:@"您当前还没有好友，快去添加好友吧"];
+        if ([[g_pIMMyself friends] count] >0) {
+            [_totalNumLabel setText:@""];
+        } else {
+            [_totalNumLabel setText:@"您当前还没有好友，快去添加好友吧"];
+        }
     }
     
     _searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:self];
@@ -170,14 +179,32 @@
     
     NSArray *friendList = [g_pIMMyself friends];
     
-    _friendList = [self classifyData:friendList];
+    [self performSelectorInBackground:@selector(loadFriendlist:) withObject:friendList];
     
+}
+
+- (void)loadFriendlist:(NSArray *)array {
+    
+    
+    _friendList = [self classifyData:array];
+    
+    [self performSelectorOnMainThread:@selector(updateInterface:) withObject:[NSNumber numberWithInteger:[array count]] waitUntilDone:YES];
+}
+
+- (void)updateInterface:(NSNumber *)count {
     [_tableView reloadData];
     
-    if ([_friendList count] > 0) {
-        [_totalNumLabel setText:[NSString stringWithFormat:@"%lu位联系人",(unsigned long)[_friendList count]]];
+    if (![g_pIMMyself relationshipInitialized] && [g_pIMMyself loginStatus] == IMMyselfLoginStatusLogined) {
+        [_totalNumLabel setText:@"正在获取好友列表..."];
+        [_totalNumLabel setCenter:CGPointMake(160, 180)];
+    }else if ([_friendList count] > 0) {
+        [_totalNumLabel setText:[NSString stringWithFormat:@"%@位联系人",count]];
+        [_totalNumLabel setFrame:CGRectMake(10, 0, 300, 44)];
+        
     } else {
-        [_totalNumLabel setText:@"您当前还没有好友，快去添加好友吧"];
+        [_totalNumLabel setText:@""];
+        [_totalNumLabel setCenter:CGPointMake(160, 180)];
+        
     }
 }
 
@@ -186,103 +213,45 @@
     
     array = [array sortedArrayUsingFunction:Array_sortByPinyin context:NULL];
     
-    NSInteger offset = 0;
+    for (int i = 0; i < 26; i++) {
+        [_sectionDic setObject:[NSMutableArray array] forKey:[NSString stringWithFormat:@"%c",'A'+i]];
+    }
     
-    NSMutableArray *symbolArray = [[NSMutableArray alloc] initWithCapacity:32];
+    [_sectionDic setObject:[NSMutableArray array] forKey:[NSString stringWithFormat:@"%c",'#']];
     
-    for (char c = 'A'; c <= 'Z'; c ++) {
-        NSMutableArray *characterArray = [[NSMutableArray alloc] initWithCapacity:32];
+    for (NSString * customUserID in array) {
+        NSString *first = [[NSString stringWithFormat:@"%c",pinyinFirstLetter([customUserID characterAtIndex:0])] uppercaseString];
+        NSString *sectionName = nil;
         
-        for (NSInteger i = offset; i < [array count]; i ++) {
-            NSString *customUserID = [array objectAtIndex:i];
-            
-            if (![customUserID isKindOfClass:[NSString class]]) {
-                offset ++;
-                continue;
-            }
-            
-            if (![[customUserID firstCharactor] isEqualToString:[NSString stringWithFormat:@"%c",c]]) {
-                if ([[customUserID firstCharactor] compare:@"A"] == NSOrderedAscending ||
-                    [[customUserID firstCharactor] compare:@"Z"] == NSOrderedDescending) {
-                    [symbolArray addObject:customUserID];
-                    offset ++;
-                    continue;
-                }
-                
-                break;
-            }
-            
-            [characterArray addObject:customUserID];
-            offset ++;
+        if ([first compare:@"A"] == NSOrderedAscending || [first compare:@"Z"] == NSOrderedDescending) {
+            sectionName = [NSString stringWithFormat:@"%c",'#'];
+        } else {
+            sectionName = first;
         }
         
-        if ([characterArray count] > 0) {
+        [[_sectionDic objectForKey:sectionName] addObject:customUserID];
+    }
+    
+    for (int i = 0; i < 26; i++) {
+        NSString *string = [NSString stringWithFormat:@"%c",'A' + i];
+        
+        NSArray *array = [_sectionDic objectForKey:string];
+        
+        if ([array count] > 0) {
+            [classificationArray addObject:array];
             
-            [_friendTitles addObject:[NSString stringWithFormat:@"%c",c]];
-            
-            [classificationArray addObject:characterArray];
+            [_friendTitles addObject:string];
         }
     }
     
-    if ([symbolArray count] > 0) {
-        [_friendTitles addObject:@"#"];
+    if ([[_sectionDic objectForKey:@"#"] count] > 0) {
+        [classificationArray addObject:[_sectionDic objectForKey:@"#"]];
         
-        [classificationArray addObject:symbolArray];
+        [_friendTitles addObject:@"#"];
     }
     
     return classificationArray;
 }
-//- (NSMutableArray *)classifyData:(NSArray *)array {
-//    NSMutableArray *classificationArray = [[NSMutableArray alloc] initWithCapacity:32];
-//    
-//    array = [array sortedArrayUsingFunction:Array_sortByPinyin context:NULL];
-//    
-//    NSInteger offset = 0;
-//    
-//    NSMutableArray *symbolArray = [[NSMutableArray alloc] initWithCapacity:32];
-//    
-//    for (char c = 'A'; c <= 'Z'; c ++) {
-//        NSMutableArray *characterArray = [[NSMutableArray alloc] initWithCapacity:32];
-//        
-//        for (NSInteger i = offset; i < [array count]; i ++) {
-//            NSString *customUserID = [array objectAtIndex:i];
-//            
-//            if (![customUserID isKindOfClass:[NSString class]]) {
-//                offset ++;
-//                continue;
-//            }
-//            
-//            if (![[customUserID firstCharactor] isEqualToString:[NSString stringWithFormat:@"%c",c]]) {
-//                if ([[customUserID firstCharactor] compare:@"A"] == NSOrderedAscending ||
-//                    [[customUserID firstCharactor] compare:@"Z"] == NSOrderedDescending) {
-//                    [symbolArray addObject:customUserID];
-//                    offset ++;
-//                    continue;
-//                }
-//                
-//                break;
-//            }
-//            
-//            [characterArray addObject:customUserID];
-//            offset ++;
-//        }
-//        
-//        if ([characterArray count] > 0) {
-//            
-//            [_friendTitles addObject:[NSString stringWithFormat:@"%c",c]];
-//            
-//            [classificationArray addObject:characterArray];
-//        }
-//    }
-//    
-//    if ([symbolArray count] > 0) {
-//        [_friendTitles addObject:@"#"];
-//        
-//        [classificationArray addObject:symbolArray];
-//    }
-//    
-//    return classificationArray;
-//}
 
 - (void)searchUserForCustomUserID:(NSString *)searchString {
     [_searchResult removeAllObjects];
@@ -304,7 +273,7 @@
                 continue;
             }
             
-            NSRange range = [[[customUserID pinYin] uppercaseString] rangeOfString:[searchString uppercaseString]];
+            NSRange range = [[[POAPinyin convert:customUserID] uppercaseString] rangeOfString:[searchString uppercaseString]];
             
             if (range.location != NSNotFound) {
                 [resultArray addObject:customUserID];
