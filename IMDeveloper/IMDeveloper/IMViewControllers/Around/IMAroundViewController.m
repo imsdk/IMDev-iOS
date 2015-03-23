@@ -129,7 +129,20 @@
     UIImage *image = [g_pIMSDK mainPhotoOfUser:[location customUserID]];
     
     if (image == nil) {
-        image = [UIImage imageNamed:@"IM_head_default.png"];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:[location customUserID]];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
     }
     
     [cellView setHeadPhoto:image];
@@ -199,12 +212,22 @@
 
 - (void)updateFailedWithError:(NSString *)error {
     _notifyText = @"获取周边用户失败，请稍候重试";
+    
+    if ([error isEqualToString:@"Location Fetch failed"]) {
+        _notifyText = @"请到手机系统的[设置]->[隐私]->[定位服务]中打开定位服务，并允许使用定位服务";
+    }
+    
     _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
     [self displayNotifyHUD];
 }
 
 - (void)nextPageFailedWithError:(NSString *)error {
     _notifyText = @"获取周边用户失败，请稍后重试";
+    
+    if ([error isEqualToString:@"Location Fetch failed"]) {
+        _notifyText = @"请到手机系统的[设置]->[隐私]->[定位服务]中打开定位服务，并允许使用定位服务";
+    }
+    
     _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
     [self displayNotifyHUD];
 }
@@ -228,7 +251,7 @@
     }
     
     [self.tabBarController.view addSubview:[self notify]];
-    [[self notify] presentWithDuration:1.0f speed:0.5f inView:self.tabBarController.view completion:^{
+    [[self notify] presentWithDuration:1.5f speed:0.5f inView:self.tabBarController.view completion:^{
         [[self notify] removeFromSuperview];
     }];
 }

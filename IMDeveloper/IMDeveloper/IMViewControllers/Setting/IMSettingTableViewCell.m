@@ -11,6 +11,7 @@
 
 //IMSDK Headers
 #import "IMSDK+MainPhoto.h"
+#import "IMSDK+CustomUserInfo.h"
 
 @implementation IMSettingTableViewCell {
     UIImageView *_headView;
@@ -91,7 +92,20 @@
     _headPhoto = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
     if (_headPhoto == nil) {
-        _headPhoto = [UIImage imageNamed:@"IM_head_default.png"];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:_customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            _headPhoto = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            _headPhoto = [UIImage imageNamed:@"IM_head_male.png"];
+        }
     }
     
     [_headView setImage:_headPhoto];

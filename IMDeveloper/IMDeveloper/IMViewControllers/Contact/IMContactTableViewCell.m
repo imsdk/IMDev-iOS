@@ -50,7 +50,7 @@
     _headPhoto = headPhoto;
     
     if (_headPhoto == nil) {
-        _headPhoto = [UIImage imageNamed:@"IM_head_default.png"];
+        _headPhoto = [UIImage imageNamed:@"IM_head_male.png"];
     }
     
     [_headView setImage:_headPhoto];
@@ -80,7 +80,7 @@
     _headPhoto = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
     if (_headPhoto == nil) {
-        _headPhoto = [UIImage imageNamed:@"IM_head_default.png"];
+        _headPhoto = [UIImage imageNamed:@"IM_head_male.png"];
     }
     
     [_headView setImage:_headPhoto];

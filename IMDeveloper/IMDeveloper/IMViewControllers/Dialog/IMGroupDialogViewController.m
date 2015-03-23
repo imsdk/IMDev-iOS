@@ -21,8 +21,11 @@
 #import "IMGroupChatView.h"
 #import "IMSDK+Group.h"
 #import "IMMyself.h"
+#import "IMSDK+CustomUserInfo.h"
+#import "IMSDK+MainPhoto.h"
+#import "IMMyself+RecentGroups.h"
 
-@interface IMGroupDialogViewController ()<IMGroupChatViewDelegate, IMGroupInfoUpdateDelegate>
+@interface IMGroupDialogViewController ()<IMGroupChatViewDelegate, IMGroupInfoUpdateDelegate, IMGroupChatViewDatasource>
 
 - (void)rightBarButtonItemClick:(id)sender;
 
@@ -52,6 +55,8 @@
     // Do any additional setup after loading the view.
     
     [[g_pIMSDKManager recentChatObjects] addObject:_groupID];
+    [g_pIMMyself clearUnreadGroupChatMessageWithGroupID:_groupID];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IMUnReadMessageChangedNotification object:nil];
     
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"群信息" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
     
@@ -92,6 +97,8 @@
     [self showGroupMemberName:nil];
     [_groupChatView setParentController:self];
     [_groupChatView setDelegate:self];
+    [_groupChatView setDataSource:self];
+    
     [[self view] addSubview:_groupChatView];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removedByGroupManager) name:IMRemovedGroupNotification(_groupID) object:nil];
@@ -161,6 +168,33 @@
 }
 
 
+#pragma mark - IMGroupChatViewDataSource
+
+- (UIImage *)groupChatView:(IMGroupChatView *)groupChatView imageForCustomUserID:(NSString *)customUserID {
+    UIImage *image = [g_pIMSDK mainPhotoOfUser:customUserID];
+    
+    if (image == nil) {
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
+        
+    }
+    
+    return image;
+}
+
+
 #pragma mark - IMGroupChatViewDelegate
 
 - (void)onHeadViewTaped:(NSString *)customUserID {
@@ -193,6 +227,18 @@
     
     _notifyText = error;
     _notifyImage = [UIImage imageNamed:@"IM_alert_image.png"];
+    [self displayNotifyHUD];
+}
+
+- (void)feedbackToServerFailed:(NSString *)error {
+    _notifyText = @"举报信息反馈失败";
+    _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
+    [self displayNotifyHUD];
+}
+
+- (void)feedbackToServerSuccess:(NSString *)information {
+    _notifyText = @"已经反馈到服务器，我们会尽快审核处理！";
+    _notifyImage = [UIImage imageNamed:@"IM_success_image.png"];
     [self displayNotifyHUD];
 }
 

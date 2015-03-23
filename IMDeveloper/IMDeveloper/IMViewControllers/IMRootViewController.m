@@ -76,6 +76,7 @@
     if (self) {
         // Custom initialization
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logout) name:IMLogoutNotification object:nil];
+        
     }
     return self;
 }
@@ -125,16 +126,11 @@
     [g_pIMMyself setRelationshipDelegate:self];
     [g_pIMMyself setGroupDelegate:self];
     [g_pIMMyself setCustomUserInfoDelegate:self];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)logout {
@@ -180,6 +176,20 @@
 
 
 #pragma mark - IMMyself delegate
+
+- (void)didLogin:(BOOL)autoLogin {
+    
+}
+
+- (void)loginFailedWithError:(NSString *)error {
+    if ([[error uppercaseString] isEqualToString:@"LOGIN CONFLICT"] || [[error uppercaseString] isEqualToString:@"WRONG PASSWORD"]){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"你的帐号在别处登陆,请确认是否本人操作" message:nil delegate:nil cancelButtonTitle:@"好" otherButtonTitles:nil];
+        
+        [alert show];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:IMLogoutNotification object:nil];
+    }
+}
 
 - (void)didLogoutFor:(NSString *)reason {
     if ([[reason uppercaseString] isEqualToString:@"USER LOGOUT"] || [[reason uppercaseString] isEqualToString:@"LOGIN CONFLICT"] || [g_pIMMyself customUserID] == nil) {

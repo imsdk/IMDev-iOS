@@ -23,6 +23,7 @@
 #import "IMMyself+Relationship.h"
 #import "IMSDK+MainPhoto.h"
 #import "IMMyself+Group.h"
+#import "IMSDK+CustomUserInfo.h"
 
 @interface IMAddGroupMemberViewController ()<UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate>
 
@@ -397,16 +398,23 @@
     [(IMContactTableViewCell *)cell setCustomUserID: customUserID];
     
     
-    UIImage *image = nil;
-    
-    if ([indexPath section] == 0) {
-        image = [UIImage imageNamed:@"IM_head_default.png"];
-    } else {
-        image = [g_pIMSDK mainPhotoOfUser:customUserID];
-    }
+    UIImage *image = [g_pIMSDK mainPhotoOfUser:customUserID];
     
     if (image == nil) {
-        image = [UIImage imageNamed:@"IM_head_default.png"];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
     }
     
     [(IMContactTableViewCell *)cell setHeadPhoto:image];

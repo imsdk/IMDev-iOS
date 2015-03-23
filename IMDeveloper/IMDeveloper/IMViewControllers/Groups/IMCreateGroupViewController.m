@@ -130,7 +130,11 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if ([[textField text] length] + [string length] > 10 ) {
+    NSMutableString *replaceString = [NSMutableString stringWithString:[textField text]];
+    
+    [replaceString replaceCharactersInRange:range withString:string];
+    
+    if ([replaceString length] > 10 ) {
         _notifyText = @"群组名称不能超过10个字符";
         _notifyImage = [UIImage imageNamed:@"IM_alert_image.png"];
         [self displayNotifyHUD];

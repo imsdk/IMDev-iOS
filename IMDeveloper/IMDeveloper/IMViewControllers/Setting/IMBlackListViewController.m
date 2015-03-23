@@ -13,6 +13,7 @@
 //IMSDK Headers
 #import "IMMyself+Relationship.h"
 #import "IMSDK+MainPhoto.h"
+#import "IMSDK+CustomUserInfo.h"
 
 @interface IMBlackListViewController ()<UITableViewDataSource, UITableViewDelegate>
 
@@ -63,7 +64,20 @@
     UIImage *headPhoto = [g_pIMSDK mainPhotoOfUser:[[g_pIMMyself blacklistUsers] objectAtIndex:[indexPath row]]];
     
     if (headPhoto == nil) {
-        headPhoto = [UIImage imageNamed:@"IM_head_default.png"];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:[[g_pIMMyself blacklistUsers] objectAtIndex:[indexPath row] ]];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            headPhoto = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            headPhoto = [UIImage imageNamed:@"IM_head_male.png"];
+        }
     }
     
     [cell setHeadPhoto:headPhoto];

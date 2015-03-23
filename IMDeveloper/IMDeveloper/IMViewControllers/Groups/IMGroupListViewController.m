@@ -154,7 +154,7 @@
 
     } else  {
         [_totalNumLabel setText:[NSString stringWithFormat:@"%lu个群组",(unsigned long)[_groupList count]]];
-        [_totalNumLabel setFrame:CGRectMake(10, 0, 300, 88)];
+        [_totalNumLabel setFrame:CGRectMake(10, 0, 300, 50)];
     }
     
     [_tableView reloadData];
@@ -231,7 +231,7 @@ NSInteger GroupArray_sortByPinyin(IMGroupInfo *info1, IMGroupInfo *info2, void *
         cell = [[IMContactTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
     }
     
-    [cell setHeadPhoto:[UIImage imageNamed:@"IM_head_default"]];
+    [cell setHeadPhoto:[UIImage imageNamed:@"IM_head_default.png"]];
     
     if (tableView == _tableView) {
         if ([_groupList count] <= [indexPath row]) {

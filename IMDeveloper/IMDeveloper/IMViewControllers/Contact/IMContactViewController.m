@@ -20,6 +20,7 @@
 //IMSDK Headers
 #import "IMMyself+Relationship.h"
 #import "IMSDK+MainPhoto.h"
+#import "IMSDK+CustomUserInfo.h"
 
 @interface IMContactViewController ()<UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate>
 
@@ -406,7 +407,20 @@
     }
     
     if (image == nil) {
-        image = [UIImage imageNamed:@"IM_head_default.png"];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
     }
     
     [(IMContactTableViewCell *)cell setHeadPhoto:image];

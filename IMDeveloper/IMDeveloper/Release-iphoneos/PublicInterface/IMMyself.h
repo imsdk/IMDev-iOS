@@ -64,13 +64,6 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
  */
 - (void)didLogoutFor:(NSString *)reason;
 
-/**
- @method
- @brief 退出登录失败 的回调方法
- @param error 退出登录失败的错误信息
- */
-- (void)logoutFailedWithError:(NSString *)error;
-
 - (void)didLoseConnection;
 
 - (void)didReconnect;
@@ -78,7 +71,8 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 /**
  @method
  @brief 登录状态更新 的回调方法
- @param status
+ @param oldStatus 原来的登录状态
+ @param newStatus 新的登录状态
  */
 - (void)loginStatusDidUpdateForOldStatus:(IMMyselfLoginStatus)oldStatus newStatus:(IMMyselfLoginStatus)newStatus;
 
@@ -98,6 +92,15 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 
 /**
  @method
+ @brief 发送系统文本消息成功的回调方法
+ @param text                  文本消息内容
+ @param timeIntervalSince1970 1970年到客户端发送文本消息时间的秒数
+ */
+- (void)didSendSystemText:(NSString *)text
+           clientSendTime:(UInt32)timeIntervalSince1970;
+
+/**
+ @method
  @brief 发送文本消息失败的回调方法
  @param text                  文本消息内容
  @param customUserID          接收方的用户名
@@ -108,6 +111,18 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
                   toUser:(NSString *)customUserID
           clientSendTime:(UInt32)timeIntervalSince1970
                    error:(NSString *)error;
+
+
+/**
+ @method
+ @brief 给服务器发送文本消息失败的回调方法
+ @param text                  文本消息内容
+ @param timeIntervalSince1970 1970年到客户端发送文本消息时间的秒数
+ @param error                 发送文本消息失败的错误信息
+ */
+- (void)failedToSendSystemText:(NSString *)text
+                clientSendTime:(UInt32)timeIntervalSince1970
+                         error:(NSString *)error;
 
 /**
  @method
@@ -220,11 +235,10 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 
 /**
  @method
- @brief 初始化登录信息
- @param customUserID 登录用户名，不能为nil，长度不能超过64个字节
- @param appkey       应用标识，不能为空，开发者需要填写从IMSDK.im官网注册时获取的appkey
+ @brief 初始化用户数据
+ @param customUserID 登录用户名，只能由2～32个字节的字母数字,'_'和'.'组成。
  */
-- (void)initWithCustomUserID:(NSString *)customUserID appKey:(NSString *)appKey;
+- (void)setCustomUserID:(NSString *)customUserID;
 
 /**
  @property
@@ -234,11 +248,11 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 @property (nonatomic, assign) BOOL autoLogin;
 
 
-#pragma mark - 注册
+#pragma mark - 注册与登录
 
 /**
  @method
- @brief 注册接口 （异步方法）
+ @brief 注册接口 （异步方法） 注册成功后会自动登录
  @param timeoutInterval       注册超时时间
  @param success               注册成功的block回调
  @param failure               注册失败的block回调
@@ -248,29 +262,28 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
                               success:(void (^)())success
                               failure:(void (^)(NSString *error))failure;
 
-#pragma mark - 登录
-
 /**
  @method
  @brief 登录接口 （异步方法）
  */
-- (UInt32)login;
+- (UInt32)loginWithTimeoutInterval:(UInt32)timeoutInterval
+                           success:(void (^)())success
+                           failure:(void (^)(NSString *error))failure;
+
 
 /**
- @method
- @brief 登录接口 （异步方法）
- @param autoRegister          自动注册
- @param timeoutInterval       登录超时时间
- @param success               登录成功的block回调
- @param autoLogin             是否自动登录
- @param failure               登录失败的block回调
- @param error                 登录失败的错误信息
+ @method  （v1.2.3及以后）
+ @brief  自动注册接口（异步方法） IMSDK一键注册，自动生成用户名和密码，注册成功后自动登录
+ @param timeoutInterval       注册超时时间
+ @param success               注册并登录成功的block回调
+ @param customUserID          注册成功自动生成的用户名
+ @param password              注册成功自动生成的密码
+ @param failure               注册失败的block回调
+ @param error                 注册失败的错误信息
  */
-- (UInt32)loginWithAutoRegister:(BOOL)autoRegister
-                timeoutInterval:(UInt32)timeoutInterval
-                        success:(void (^)(BOOL autoLogin))success
-                        failure:(void (^)(NSString *error))failure;
-
+- (UInt32)autoRegisterWithTimeoutInterval:(UInt32)timeoutInterval
+                                  success:(void(^)(NSString *customUserID ,NSString *password))success
+                                  failure:(void(^)(NSString * error))failure;
 
 /**
  @property
@@ -283,20 +296,10 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
 #pragma mark - 注销
 /**
  @method
- @brief 注销接口 （异步方法）
- @discussion 注销将会自动将IMSDK对应当前用户的deviceToken清空，注销后用户收不到来自IMSDK的推送消息，注销可能需要少许时间
+ @brief 退出登录接口 （同步方法）
+ @discussion 退出登录将会自动将IMSDK对应当前用户的deviceToken清空，注销后用户收不到来自IMSDK的推送消息，注销可能需要少许时间
  */
-- (UInt32)logout;
-
-/**
- @method
- @brief 退出登录接口 （异步方法）
- @param success               退出登录成功的block回调
- @param failure               退出登录失败的block回调
- @param error                 退出登录失败的错误信息
- */
-- (UInt32)logoutOnSuccess:(void (^)())success
-                  failure:(void (^)(NSString *error))failure;
+- (void)logout;
 
 
 #pragma mark - 发送文本消息
@@ -331,9 +334,9 @@ typedef NS_ENUM(NSInteger, IMMyselfLoginStatus) {
  @param failure               发送文本消息失败的block回调
  @param error                 发送文本消息失败的错误信息
  */
-- (UInt32)sendTextToServer:(NSString *)text
-                   success:(void (^)())success
-                   failure:(void (^)(NSString *error))failure;
+- (UInt32)sendSystemText:(NSString *)text
+                 success:(void (^)())success
+                 failure:(void (^)(NSString *error))failure;
 
 - (BOOL)beginRecordingToUser:(NSString *)customUserID;
 - (UInt32)stopRecordingToUser:(NSString *)customUserID

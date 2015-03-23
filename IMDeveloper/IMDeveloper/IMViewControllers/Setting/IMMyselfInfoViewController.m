@@ -92,7 +92,11 @@
         image = [g_pIMSDK mainPhotoOfUser:[g_pIMMyself customUserID]];
         
         if (image == nil) {
-            image = [UIImage imageNamed:@"IM_head_default.png"];
+            if ([_sex isEqualToString:@"女"]) {
+                image = [UIImage imageNamed:@"IM_head_female.png"];
+            } else {
+                image = [UIImage imageNamed:@"IM_head_male.png"];
+            }
         }
         
         [cell setHeadPhoto:image];
@@ -271,7 +275,7 @@
         _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
         [self displayNotifyHUD];
         
-        NSString *customInfo = [g_pIMMyself customUserInfo];
+        NSString *customInfo = [g_pIMSDK customUserInfo];
         
         _customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
         

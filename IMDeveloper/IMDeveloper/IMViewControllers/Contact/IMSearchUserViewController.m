@@ -97,7 +97,21 @@
     UIImage *image = [g_pIMSDK mainPhotoOfUser:[_searchBar text]];
     
     if (image == nil) {
-        image = [UIImage imageNamed:@"IM_head_default.png"];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:[_searchBar text]];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
+
         
         [g_pIMSDK requestMainPhotoOfUser:[_searchBar text] success:^(UIImage *mainPhoto) {
             if (mainPhoto) {

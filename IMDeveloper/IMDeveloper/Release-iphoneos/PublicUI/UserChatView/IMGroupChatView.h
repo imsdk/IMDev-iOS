@@ -9,8 +9,27 @@
 #import <UIKit/UIKit.h>
 #import "IMChatView.h"
 
+@class IMGroupChatView;
+
+@protocol IMGroupChatViewDatasource <NSObject>
+
+@optional
+
+/**
+ 在显示每一行时，会回调该方法，开发者可在该方法中自定义需要显示的名称
+ */
+- (NSString *)groupChatView:(IMGroupChatView *)groupChatView titleForCustomUserID:(NSString *)customUserID;
+
+/**
+ 在显示每一行时，会回调该方法，开发者可在该方法中自定义需要显示的图片
+ */
+- (UIImage *)groupChatView:(IMGroupChatView *)groupChatView imageForCustomUserID:(NSString *)customUserID;
+
+@end
 
 @protocol IMGroupChatViewDelegate <NSObject>
+
+@optional
 
 /**
  头像点击回调，返回点击头像所属用户名
@@ -27,9 +46,24 @@
  */
 - (void)playAudioError:(NSString *)error;
 
+/**
+ 举报发送成功回调方法
+ */
+- (void)feedbackToServerSuccess:(NSString *)information;
+
+/**
+ 举报发送失败回调方法
+ */
+- (void)feedbackToServerFailed:(NSString *)error;
+
 @end
 
 @interface IMGroupChatView : UIView
+
+/**
+ 群组聊天界面数据源
+ */
+@property (nonatomic, weak)id<IMGroupChatViewDatasource> dataSource;
 
 /**
  群组聊天界面代理类

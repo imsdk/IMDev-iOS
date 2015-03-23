@@ -16,8 +16,11 @@
 
 //IMSDK Headers
 #import "IMChatView.h"
+#import "IMSDK+MainPhoto.h"
+#import "IMSDK+CustomUserInfo.h"
+#import "IMMyself+RecentContacts.h"
 
-@interface IMUserDialogViewController ()<IMChatViewDelegate>
+@interface IMUserDialogViewController ()<IMChatViewDelegate, IMChatViewDataSource>
 
 - (void)rightBarButtonItemClick:(id)sender;
 
@@ -50,6 +53,8 @@
     [super viewDidLoad];
     
     [[g_pIMSDKManager recentChatObjects] addObject:_customUserID];
+    [g_pIMMyself clearUnreadChatMessageWithUser:_customUserID];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IMUnReadMessageChangedNotification object:nil];
     
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"个人信息" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
     
@@ -86,6 +91,7 @@
     [view setBackgroundColor:RGB(237, 237, 237)];
     [view setParentController:self];
     [view setDelegate:self];
+    [view setDataSource:self];
     [[self view] addSubview:view];
 }
 
@@ -107,6 +113,33 @@
     [controller setFromUserDialogView:YES];
     [controller setCustomUserID:_customUserID];
     [[self navigationController] pushViewController:controller animated:YES];
+}
+
+
+#pragma mark - IMChatViewDataSource
+
+- (UIImage *)chatView:(IMChatView *)chatView imageForCustomUserID:(NSString *)customUserID {
+    UIImage *image = [g_pIMSDK mainPhotoOfUser:customUserID];
+    
+    if (image == nil) {
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
+
+    }
+    
+    return image;
 }
 
 
@@ -150,6 +183,17 @@
     [self displayNotifyHUD];
 }
 
+- (void)feedbackToServerFailed:(NSString *)error {
+    _notifyText = @"举报信息反馈失败";
+    _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
+    [self displayNotifyHUD];
+}
+
+- (void)feedbackToServerSuccess:(NSString *)information {
+    _notifyText = @"已经反馈到服务器，我们会尽快审核处理！";
+    _notifyImage = [UIImage imageNamed:@"IM_success_image.png"];
+    [self displayNotifyHUD];
+}
 
 #pragma mark - notify hud
 

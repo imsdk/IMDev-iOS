@@ -19,8 +19,22 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
     IMHeadViewStyleCircle  = 3,   
 };
 
+@class IMChatView;
+
+@protocol IMChatViewDataSource <NSObject>
+
+@optional
+
+/**
+ 在显示每一行时，会回调该方法，开发者可在该方法中自定义需要显示的图片
+ */
+- (UIImage *)chatView:(IMChatView *)chatView imageForCustomUserID:(NSString *)customUserID;
+
+@end
+
 @protocol IMChatViewDelegate <NSObject>
 
+@optional
 /**
  头像点击回调，返回点击头像所属用户名
  */
@@ -37,10 +51,14 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
 - (void)playAudioError:(NSString *)error;
 
 /**
- 发消息失败原因为用户不存在时会回调该方法。
+ 举报发送成功回调方法
  */
-- (void)notExistCustomUserID:(NSString *)customUserID;
+- (void)feedbackToServerSuccess:(NSString *)information;
 
+/**
+ 举报发送失败回调方法
+ */
+- (void)feedbackToServerFailed:(NSString *)error;
 @end
 
 @interface IMChatView : UIView
@@ -49,6 +67,11 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
  聊天界面代理
  */
 @property (nonatomic, weak)id<IMChatViewDelegate> delegate;
+
+/**
+ 聊天界面数据源
+ */
+@property (nonatomic, weak)id<IMChatViewDataSource> dataSource;
 
 /**
  一对一聊天对象的用户名

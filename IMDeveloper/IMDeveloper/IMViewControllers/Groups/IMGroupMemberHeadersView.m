@@ -83,10 +83,6 @@
 }
 
 - (void)setGroupInfo:(IMGroupInfo *)groupInfo {
-    if (_groupInfo == groupInfo) {
-        return;
-    }
-    
     _groupInfo = groupInfo;
     
     [self setCustomUserIDs:(NSMutableArray *)[_groupInfo memberList]];
@@ -105,7 +101,7 @@
         [_addMemberView setHidden:NO];
         [_deleteMemberView setHidden:NO];
     } else {
-        [_addMemberView setHidden:YES];
+        [_addMemberView setHidden:NO];
         [_deleteMemberView setHidden:YES];
     }
 }

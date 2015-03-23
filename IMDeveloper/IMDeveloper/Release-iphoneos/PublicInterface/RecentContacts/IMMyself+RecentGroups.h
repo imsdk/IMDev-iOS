@@ -8,6 +8,7 @@
 
 #import "IMMyself.h"
 #import "IMGroupInfo.h"
+#import "IMGroupChatMessage.h"
 
 /**
  @header IMMyself+RecentGroups
@@ -28,5 +29,19 @@
  @param customUserID 移除对象的用户名
  */
 - (void)removeRecentGroup:(NSString *)groupID;
+
+- (NSInteger)groupChatMessageCountWithGroupID:(NSString *)groupID;
+
+- (IMGroupChatMessage *)groupChatMessageWithGroupID:(NSString *)groupID index:(NSInteger)index;
+
+- (NSInteger)unreadGroupChatMessageCount;
+
+- (NSInteger)unreadGroupChatMessageCountWithGroupID:(NSString *)groupID;
+
+- (BOOL)clearUnreadGroupChatMessage;
+
+- (BOOL)clearUnreadGroupChatMessageWithGroupID:(NSString *)groupID;
+
+- (NSString *)lastErrorForRecentGroups;
 
 @end

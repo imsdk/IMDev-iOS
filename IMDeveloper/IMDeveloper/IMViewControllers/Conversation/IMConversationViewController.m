@@ -18,6 +18,9 @@
 #import "IMMyself+Relationship.h"
 #import "IMRecentGroupsView.h"
 #import "IMMyself+Group.h"
+#import "IMMyself+RecentGroups.h"
+#import "IMSDK+CustomUserInfo.h"
+#import "IMSDK+MainPhoto.h"
 
 @interface IMConversationViewController ()<IMRecentContactsViewDelegate, IMRecentContactsViewDatasource, UIAlertViewDelegate, IMRecentGroupsViewDatasource, IMRecentGroupsViewDelegate>
 
@@ -38,6 +41,7 @@
 {
     [_recentContactsView setDelegate:nil];
     [_recentContactsView setDataSource:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -54,6 +58,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMGroupListDidInitializeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMRelationshipDidInitializeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMReceiveUserMessageNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMUnReadMessageChangedNotification object:nil];
     }
     return self;
 }
@@ -149,7 +154,7 @@
 }
 
 - (void)setBadge {
-    NSInteger unreadCount = [g_pIMMyself unreadChatMessageCount];
+    NSInteger unreadCount = [g_pIMMyself unreadChatMessageCount] + [g_pIMMyself unreadGroupChatMessageCount];
     
     if (unreadCount) {
         [[self tabBarItem] setBadgeValue:[NSString stringWithFormat:@"%ld",(long)unreadCount]];
@@ -161,7 +166,38 @@
 
 #pragma mark - IMRecentContactView delegate
 
+- (UIImage *)recentContactsView:(IMRecentContactsView *)recentContactsView imageForIndex:(NSInteger)index {
+    NSString *customUserID = [[g_pIMMyself recentContacts] objectAtIndex:index];
+    
+    UIImage *image = [g_pIMSDK mainPhotoOfUser:customUserID];
+    
+    if (image == nil) {
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
+    }
+    
+    return image;
+}
+
 - (void)recentContactsView:(IMRecentContactsView *)recentContactView didSelectRowWithCustomUserID:(NSString *)customUserID {
+    for (UIViewController *controller in [[self navigationController] viewControllers]) {
+        if ([controller isKindOfClass:[IMUserDialogViewController class]]) {
+            return;
+        }
+    }
+    
     _selectedCustomUserID = customUserID;
     
     if (![g_pIMMyself isMyFriend:customUserID] && ![[g_pIMMyself customUserID] isEqualToString:customUserID]) {
@@ -184,10 +220,20 @@
     [[self navigationController] pushViewController:controller animated:YES];
 }
 
+- (void)recentContactsView:(IMRecentContactsView *)recentContactView didDeleteRowWithCustomUserID:(NSString *)customUserID {
+    [self reloadData];
+}
+
 
 #pragma mark - IMRecentGroupsView delegate
 
 - (void)recentGroupsView:(IMRecentGroupsView *)recentGroupsView didSelectRowWithGroupID:(NSString *)groupID {
+    for (UIViewController *controller in [[self navigationController] viewControllers]) {
+        if ([controller isKindOfClass:[IMGroupDialogViewController class]]) {
+            return;
+        }
+    }
+    
     if (![g_pIMMyself isMyGroup:groupID]) {
         //if is not friend, enter information controller
         
@@ -197,11 +243,18 @@
         return;
     }
     
+    [g_pIMMyself clearUnreadGroupChatMessageWithGroupID:groupID];
+    [self setBadge];
+    
     IMGroupDialogViewController *controller = [[IMGroupDialogViewController alloc] init];
     
     [controller setGroupID:groupID];
     [controller setHidesBottomBarWhenPushed:YES];
     [[self navigationController] pushViewController:controller animated:YES];
+}
+
+- (void)recentGroupsView:(IMRecentGroupsView *)recentGroupsView didDeleteRowWithGroupID:(NSString *)groupID {
+    [self reloadData];
 }
 
 

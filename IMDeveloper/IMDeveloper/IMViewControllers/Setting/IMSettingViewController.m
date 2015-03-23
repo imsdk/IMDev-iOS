@@ -12,6 +12,7 @@
 #import "IMSettingTableViewCell.h"
 #import "IMModifyPasswordViewController.h"
 #import "IMBlackListViewController.h"
+#import "IMVersionInformationViewController.h"
 
 #import "MBProgressHUD.h"
 
@@ -19,6 +20,7 @@
 #import "IMMyself.h"
 #import "IMSDK+MainPhoto.h"
 #import "IMMyself+CustomUserInfo.h"
+#import "IMSDK+CustomUserInfo.h"
 
 @interface IMSettingViewController ()<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
@@ -111,6 +113,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMCustomUserInfoDidInitializeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMReloadMainPhotoNotification([g_pIMMyself customUserID]) object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didLogout) name:IMLogoutNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -153,25 +156,23 @@
         [_hud setLabelText:@"正在注销..."];
         [_hud show:YES];
         
-        [g_pIMMyself logoutOnSuccess:^() {
-            [_hud hide:YES];
-            [_hud removeFromSuperview];
-            _hud = nil;
-        } failure:^(NSString *error) {
-            [_hud hide:YES];
-            [_hud removeFromSuperview];
-            _hud = nil;
-        }];
+        [g_pIMMyself logout];
     } else {
         isLogouting = NO;
     }
+}
+
+- (void)didLogout {
+    [_hud hide:YES];
+    [_hud removeFromSuperview];
+    _hud = nil;
 }
 
 
 #pragma mark - tableview datasource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 4;
+    return 5;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -192,7 +193,21 @@
         UIImage *headPhoto = [g_pIMSDK mainPhotoOfUser:[g_pIMMyself customUserID]];
         
         if (headPhoto == nil) {
-            headPhoto = [UIImage imageNamed:@"IM_head_default.png"];
+            NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:[g_pIMMyself customUserID]];
+            
+            NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+            NSString *sex = nil;
+            
+            if ([customInfoArray count] > 0) {
+                sex = [customInfoArray objectAtIndex:0];
+            }
+            
+            if ([sex isEqualToString:@"女"]) {
+                headPhoto = [UIImage imageNamed:@"IM_head_female.png"];
+            } else {
+                headPhoto = [UIImage imageNamed:@"IM_head_male.png"];
+            }
+
         }
         
         [(IMSettingTableViewCell *)cell setHeadPhoto:headPhoto];
@@ -237,6 +252,10 @@
         if (![[[cell contentView] subviews] containsObject:_shakeSwitch]) {
             [cell addSubview:_shakeSwitch];
         }
+    }else if ([indexPath section] == 3) {
+        [[cell textLabel] setText:@"版本信息"];
+        [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
+        [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     }
     else {
         [[cell textLabel] setText:@"退出登录"];
@@ -293,7 +312,13 @@
         [[self navigationController] pushViewController:controller animated:YES];
     } else if ([indexPath section] == 2) {
         return;
-    }else {
+    } else if ([indexPath section] == 3) {
+        IMVersionInformationViewController *controller = [[IMVersionInformationViewController alloc] init];
+        
+        [controller setHidesBottomBarWhenPushed:YES];
+        [[self navigationController] pushViewController:controller animated:YES];
+    }
+    else {
         if (isLogouting) {
             return;
         }

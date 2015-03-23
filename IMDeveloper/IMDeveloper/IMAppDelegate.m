@@ -22,10 +22,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [g_pIMSDK initWithAppKey:IMDeveloper_APPKey];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    [g_pIMSDK applicationDidFinishLaunching];
-    
     IMLoginViewController *controller = [[IMLoginViewController alloc] init] ;
         
     [[self window] setRootViewController:controller];
@@ -57,6 +57,7 @@
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
 
+
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
@@ -68,6 +69,7 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    [g_pIMSDK applicationWillEnterForeground];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application

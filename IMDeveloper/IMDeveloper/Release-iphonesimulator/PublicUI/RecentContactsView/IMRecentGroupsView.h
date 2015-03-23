@@ -33,6 +33,11 @@
  */
 - (void)recentGroupsView:(IMRecentGroupsView *)recentGroupsView didSelectRowWithGroupID:(NSString *)groupID;
 
+/**
+ 删除某个最近联系人成功后的回调方法
+ */
+- (void)recentGroupsView:(IMRecentGroupsView *)recentGroupsView didDeleteRowWithGroupID:(NSString *)groupID;
+
 @end
 
 @interface IMRecentGroupsView : UIView

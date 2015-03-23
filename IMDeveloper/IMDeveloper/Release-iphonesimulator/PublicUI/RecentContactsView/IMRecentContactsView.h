@@ -32,11 +32,16 @@
  */
 @protocol IMRecentContactsViewDelegate <NSObject>
 
+@optional
 /**
  选择某个最近联系人用户的回调方法
  */
-@optional
 - (void)recentContactsView:(IMRecentContactsView *)recentContactView didSelectRowWithCustomUserID:(NSString *)customUserID;
+
+/**
+ 删除某个最近联系人成功后的回调方法
+ */
+- (void)recentContactsView:(IMRecentContactsView *)recentContactView didDeleteRowWithCustomUserID:(NSString *)customUserID;
 
 @end
 

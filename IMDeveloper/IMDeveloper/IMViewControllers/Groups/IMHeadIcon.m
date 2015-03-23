@@ -12,6 +12,7 @@
 
 //IMSDK Headers
 #import "IMSDK+MainPhoto.h"
+#import "IMSDK+CustomUserInfo.h"
 
 @implementation IMHeadIcon {
     UIImage *_headImage;
@@ -69,7 +70,21 @@
     _headImage = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
     if (_headImage == nil) {
-        _headImage = [UIImage imageNamed:@"IM_head_default.png"];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            _headImage = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            _headImage = [UIImage imageNamed:@"IM_head_male.png"];
+        }
+        
         [g_pIMSDK requestMainPhotoOfUser:_customUserID success:^(UIImage *mainPhoto) {
             if (mainPhoto) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification(_customUserID) object:nil];

@@ -213,10 +213,10 @@
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cellID"];
     
     if ([indexPath section] == 0) {
-        NSInteger viewCount = [[_groupInfo memberList] count];
+        NSInteger viewCount = [[_groupInfo memberList] count]  + 1;
         
         if ([[_groupInfo ownerCustomUserID] isEqualToString:[g_pIMMyself customUserID]]) {
-            viewCount += 2;
+            viewCount += 1;
         }
         
         for (UIView *view in [[cell contentView] subviews]) {

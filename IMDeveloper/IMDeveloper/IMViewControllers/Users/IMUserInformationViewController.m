@@ -171,8 +171,9 @@
         return;
     }
     
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"加入黑名单" otherButtonTitles:nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"加入黑名单" otherButtonTitles:@"投诉",nil];
     
+    [actionSheet setTag:1000];
     [actionSheet setActionSheetStyle:UIActionSheetStyleAutomatic];
     [actionSheet showFromTabBar:[self tabBarController].tabBar];
     
@@ -182,10 +183,24 @@
     UIImage *image = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
     if (image == nil) {
-        [_headView setImage:[UIImage imageNamed:@"IM_head_default.png"]];
-    } else {
-        [_headView setImage:image];
+        NSString *customInfo = [g_pIMSDK customUserInfoWithCustomUserID:_customUserID];
+        
+        NSArray *customInfoArray = [customInfo componentsSeparatedByString:@"\n"];
+        NSString *sex = nil;
+        
+        if ([customInfoArray count] > 0) {
+            sex = [customInfoArray objectAtIndex:0];
+        }
+        
+        if ([sex isEqualToString:@"女"]) {
+            image = [UIImage imageNamed:@"IM_head_female.png"];
+        } else {
+            image = [UIImage imageNamed:@"IM_head_male.png"];
+        }
+        
     }
+    
+    [_headView setImage:image];
     
     [g_pIMSDK requestMainPhotoOfUser:_customUserID success:^(UIImage *mainPhoto) {
         if (mainPhoto) {
@@ -319,30 +334,76 @@
 #pragma mark - actionsheet
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 0) {
-        //move to blacklist
-        [g_pIMMyself moveToBlacklist:_customUserID success:^{
-            [self loadUserRelations];
-            __block BOOL fromUserDialogView = _fromUserDialogView;
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadBlacklistNotification object:nil];
-            if (fromUserDialogView) {
+    if (actionSheet.tag == 1000) {
+        if (buttonIndex == 0) {
+            //move to blacklist
+            [g_pIMMyself moveToBlacklist:_customUserID success:^{
+                [self loadUserRelations];
+                __block BOOL fromUserDialogView = _fromUserDialogView;
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadBlacklistNotification object:nil];
+                if (fromUserDialogView) {
+                    [self displayNotifyHUD];
+                    [[self navigationController] popToRootViewControllerAnimated:YES];
+                }
+            } failure:^(NSString *error) {
+                if ([error isEqualToString:@"Already in Blacklist"]) {
+                    error = @"该用户已经在黑名单中";
+                } else {
+                    error = @"加入黑名单失败";
+                }
+                
+                _notifyText = error;
+                _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
                 [self displayNotifyHUD];
-                [[self navigationController] popToRootViewControllerAnimated:YES];
-            }
-        } failure:^(NSString *error) {
-            if ([error isEqualToString:@"Already in Blacklist"]) {
-                error = @"该用户已经在黑名单中";
-            } else {
-                error = @"加入黑名单失败";
-            }
+                
+            }];
+        } else if (buttonIndex == 1) {
+            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"投诉" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"色情", @"暴力", @"欺诈", @"侮辱诋毁", @"广告骚扰", @"政治",nil];
             
-            _notifyText = error;
-            _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
-            [self displayNotifyHUD];
-
-        }];
+            [actionSheet setTag:1001];
+            [actionSheet setActionSheetStyle:UIActionSheetStyleAutomatic];
+            [actionSheet showFromTabBar:[self tabBarController].tabBar];
+        }
+    } else if (actionSheet.tag == 1001) {
+        NSString *feedbackString = nil;
+        
+        switch (buttonIndex) {
+            case 0:
+                feedbackString = @"色情";
+                break;
+            case 1:
+                feedbackString = @"暴力";
+                break;
+            case 2:
+                feedbackString = @"欺诈";
+                break;
+            case 3:
+                feedbackString = @"侮辱诋毁";
+                break;
+            case 4:
+                feedbackString = @"广告骚扰";
+                break;
+            case 5:
+                feedbackString = @"政治";
+                break;
+            default:
+                break;
+        }
+        
+        if (feedbackString) {
+            [g_pIMMyself sendSystemText:feedbackString success:^{
+                _notifyText = @"已经反馈到服务器,我们会尽快审核处理！";
+                _notifyImage = [UIImage imageNamed:@"IM_success_image.png"];
+                [self displayNotifyHUD];
+            } failure:^(NSString *error) {
+                _notifyText = @"投诉失败";
+                _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
+                [self displayNotifyHUD];
+            }];
+        }
     }
+    
 }
 
 
