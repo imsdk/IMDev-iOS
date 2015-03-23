@@ -289,10 +289,10 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if ([indexPath section] == 0) {
-        NSInteger viewCount = [[_groupInfo memberList] count];
+        NSInteger viewCount = [[_groupInfo memberList] count] + 1;
         
         if ([[_groupInfo ownerCustomUserID] isEqualToString:[g_pIMMyself customUserID]]) {
-            viewCount += 2;
+            viewCount += 1;
         }
         
         return ((viewCount - 1) / 4 + 1) * 95 + 20;
