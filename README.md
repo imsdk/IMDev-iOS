@@ -35,8 +35,8 @@ IMDev——爱萌开发者，是由爱萌基于IM SDK开发并完全开源的的
 
 3、注册成为IMSDK开发者，并创建一个应用
 
-* a、打开浏览器，输入imsdk.im进入官网填写资料，注册开发者信息：
-![img](http://docs.imsdk.im/download/attachments/1343489/%E6%B3%A8%E5%86%8C.jpg?version=1&modificationDate=1411802147000&api=v2&effects=border-polaroid,blur-border)
+* a、打开浏览器，输入imsdk.im进入官网，在右上角“注册”按钮，按指引填写资料.
+<!-- ![img](http://docs.imsdk.im/download/attachments/1343489/%E6%B3%A8%E5%86%8C.jpg?version=1&modificationDate=1411802147000&api=v2&effects=border-polaroid,blur-border) -->
 
 * b、添加应用，获取appKey
 ![img](http://docs.imsdk.im/download/attachments/1343489/%E6%B7%BB%E5%8A%A0%E5%BA%94%E7%94%A8.jpeg?version=1&modificationDate=1411802127000&api=v2&effects=border-polaroid,blur-border)
