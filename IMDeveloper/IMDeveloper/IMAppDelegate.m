@@ -75,33 +75,6 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-//    NSString *loginCustomUserID = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginCustomUserID];
-//    NSString *loginPassword = [[NSUserDefaults standardUserDefaults] objectForKey:IMLoginPassword];
-//    
-//    if (loginCustomUserID && loginPassword) {
-//
-//        [[NSNotificationCenter defaultCenter] postNotificationName:IMLoginStatusChangedNotification object:nil];
-//        
-//        //check login status
-//        if ([g_pIMMyself loginStatus] == IMMyselfLoginStatusNone && [g_pIMMyself customUserID] == nil) {
-//            
-//            [g_pIMMyself initWithCustomUserID:loginCustomUserID appKey:IMDeveloper_APPKey];
-//            
-//            [g_pIMMyself setPassword:loginPassword];
-//            [g_pIMMyself setAutoLogin:YES];
-//            [g_pIMMyself loginWithAutoRegister:YES timeoutInterval:10 success:^(BOOL autoLogin) {
-//                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:IMLastLoginTime];
-//                [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself customUserID] forKey:IMLoginCustomUserID];
-//                [[NSUserDefaults standardUserDefaults] setObject:[g_pIMMyself password] forKey:IMLoginPassword];
-//                [[NSUserDefaults standardUserDefaults] synchronize];
-//            } failure:^(NSString *error) {
-//                
-//            }];
-//        }
-//        
-//        return;
-//    }
-
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

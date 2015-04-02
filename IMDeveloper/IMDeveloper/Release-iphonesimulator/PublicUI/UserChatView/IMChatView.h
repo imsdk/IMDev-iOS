@@ -23,18 +23,12 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
 
 @protocol IMChatViewDataSource <NSObject>
 
-@optional
-
-/**
- 在显示每一行时，会回调该方法，开发者可在该方法中自定义需要显示的图片
- */
 - (UIImage *)chatView:(IMChatView *)chatView imageForCustomUserID:(NSString *)customUserID;
 
 @end
 
 @protocol IMChatViewDelegate <NSObject>
 
-@optional
 /**
  头像点击回调，返回点击头像所属用户名
  */
@@ -62,6 +56,11 @@ typedef NS_ENUM(NSInteger, IMHeadViewStyle) {
 @end
 
 @interface IMChatView : UIView
+
+/**
+ 刷新聊天界面
+ */
+- (void)reloadData;
 
 /**
  聊天界面代理

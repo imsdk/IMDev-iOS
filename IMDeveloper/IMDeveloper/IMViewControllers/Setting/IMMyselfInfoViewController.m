@@ -228,7 +228,7 @@
             
             [cell setHeadPhoto:image];
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification([g_pIMMyself customUserID]) object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification object:[g_pIMMyself customUserID]];
             
         } failure:^(NSString *error) {
             _notifyText = @"上传头像失败";
@@ -262,7 +262,7 @@
             break;
     }
     
-    _customInfoArray = [NSArray arrayWithObjects:_sex,_location, _signature, nil];
+    _customInfoArray = [NSArray arrayWithObjects:_sex, _location, _signature, nil];
     [_tableView reloadData];
     
     [g_pIMMyself commitCustomUserInfo:[_customInfoArray componentsJoinedByString:@"\n"] success:^{

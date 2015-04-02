@@ -205,7 +205,7 @@
     [g_pIMSDK requestMainPhotoOfUser:_customUserID success:^(UIImage *mainPhoto) {
         if (mainPhoto) {
             [_headView setImage:mainPhoto];
-            [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification(_customUserID) object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification object:_customUserID];
         }
     } failure:^(NSString *error) {
         NSLog(@"load head image failed for %@",error);

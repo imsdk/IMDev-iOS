@@ -24,7 +24,7 @@
     
     _verisonLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, [UIScreen mainScreen].bounds.size.width - 20, 100)];
     
-    [_verisonLabel setText:[NSString stringWithFormat:@"版本号:%@\n\n版本信息:%@",[g_pIMSDK versionName],[g_pIMSDK versionNumber]]];
+    [_verisonLabel setText:[NSString stringWithFormat:@"版本号:v1.2.5\n\n版本信息:修复一些群聊bug"]];
     [_verisonLabel setNumberOfLines:0];
     [[self view] addSubview:_verisonLabel];
 }

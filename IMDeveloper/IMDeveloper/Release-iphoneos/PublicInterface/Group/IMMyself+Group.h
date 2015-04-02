@@ -229,8 +229,50 @@
  @param customUserID          发送方的用户名
  @param timeIntervalSince1970 1970年到服务端发送群文本消息时间的秒数
  */
-- (void)didReceiveText:(NSString *)text fromGroup:(NSString *)groupID fromUser:(NSString *)customUserID serverSendTime:(UInt32)timeIntervalSince1970;
+- (void)didReceiveText:(NSString *)text
+             fromGroup:(NSString *)groupID
+              fromUser:(NSString *)customUserID
+        serverSendTime:(UInt32)timeIntervalSince1970;
 
+/**
+ @method
+ @brief 接收到群组语音消息
+ @param data                  语音消息的数据内容（格式为amr）
+ @param groupID               群组ID
+ @param customUserID          发送方的用户名
+ @param timeIntervalSince1970 1970年到服务端发送群文本消息时间的秒数
+ */
+- (void)didReceiveAudioData:(NSData *)data
+                  fromGroup:(NSString *)groupID
+                   fromUser:(NSString *)customUserID
+             serverSendTime:(UInt32)timeIntervalSince1970;
+
+/**
+ @method
+ @brief 接收到群组图片消息的回调方法
+ @param photo                 收到的图片
+ @param groupID               群ID
+ @param customUserID          发送方的用户名
+ @param timeIntervalSince1970 1970年到服务端发送文本消息时间的秒数
+ */
+- (void)didReceivePhoto:(UIImage *)photo
+              fromGroup:(NSString *)groupID
+               fromUser:(NSString *)customUserID
+         serverSendTime:(UInt32)timeIntervalSince1970;
+
+#pragma mark 群组图片消息进度
+/**
+ @method
+ @brief 接收群组图片消息进度的回调方法
+ @param progress              取值范围为 0-1 -- (0, 1]
+ @param groupID               群ID
+ @param customUserID          发送方的用户名
+ @param timeIntervalSince1970 1970年到服务端发送文本消息时间的秒数
+ */
+- (void)didReceivePhotoProgress:(CGFloat)progress
+                      fromGroup:(NSString *)groupID
+               fromCustomUserID:(NSString *)customUserID
+                 serverSendTime:(UInt32)timeIntervalSince1970;
 
 #pragma mark - 发送和接收自定义群文本消息的回调方法
 
@@ -503,6 +545,6 @@
 - (UInt32)sendCustomMessage:(NSString *)text
                     toGroup:(NSString *)groupID
                     success:(void (^)())success
-                    failure:(void (^)(NSString *error))failure;;
+                    failure:(void (^)(NSString *error))failure;
 
 @end

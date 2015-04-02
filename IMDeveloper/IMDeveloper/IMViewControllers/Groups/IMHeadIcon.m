@@ -65,7 +65,7 @@
     [_nameLabel setText:customUserID];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage) name:IMReloadMainPhotoNotification(_customUserID) object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage:) name:IMReloadMainPhotoNotification object:nil];
     
     _headImage = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
@@ -87,7 +87,7 @@
         
         [g_pIMSDK requestMainPhotoOfUser:_customUserID success:^(UIImage *mainPhoto) {
             if (mainPhoto) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification(_customUserID) object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification object:_customUserID];
             }
             
         } failure:^(NSString *error) {
@@ -99,7 +99,11 @@
     
 }
 
-- (void)reloadHeadImage {
+- (void)reloadHeadImage:(NSNotification *)note {
+    if (![note.object isEqual:_customUserID]) {
+        return;
+    }
+    
     _headImage = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
     if (_headImage == nil) {

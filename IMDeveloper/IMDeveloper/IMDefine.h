@@ -25,7 +25,7 @@
 #define IMCustomUserInfoDidInitializeNotification @"IMCustomUserInfoDidInitializeNotification"
 #define IMReloadBlacklistNotification @"IMReloadBlacklistNotification"
 #define IMReloadFriendlistNotification @"IMReloadFriendlistNotification"
-#define IMReloadMainPhotoNotification(customUserID) [NSString stringWithFormat:@"IMReloadMainPhotoNotification%@",customUserID]
+#define IMReloadMainPhotoNotification @"IMReloadMainPhotoNotification"
 #define IMAddGroupMemberNotification @"IMAddGroupMemberNotification"
 #define IMReloadGroupListNotification @"IMReloadGroupListNotification"
 #define IMRemovedGroupNotification(groupID) [NSString stringWithFormat:@"IMRemovedGroupNotification%@",groupID]

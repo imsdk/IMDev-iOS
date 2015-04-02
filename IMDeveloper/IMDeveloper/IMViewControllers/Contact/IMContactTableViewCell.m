@@ -61,7 +61,7 @@
     [_usernameLabel setText:customUserID];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage) name:IMReloadMainPhotoNotification(customUserID) object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage:) name:IMReloadMainPhotoNotification object:nil];
 }
 
 - (void)awakeFromNib
@@ -76,7 +76,11 @@
     // Configure the view for the selected state
 }
 
-- (void)reloadHeadImage {
+- (void)reloadHeadImage:(NSNotification *)note {
+    if (![note.object isEqual:_customUserID]) {
+        return;
+    }
+    
     _headPhoto = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
     if (_headPhoto == nil) {

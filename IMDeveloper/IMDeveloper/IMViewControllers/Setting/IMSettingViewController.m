@@ -79,40 +79,22 @@
     
     [g_pIMSDK requestMainPhotoOfUser:[g_pIMMyself customUserID] success:^(UIImage *mainPhoto) {
         [_tableView reloadData];
+        [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification object:[g_pIMMyself customUserID]];
     } failure:^(NSString *error) {
         
     }];
-
-    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
     
-    NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
-    NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
     
     _soundSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(320 - 60, 5, 60, 34)];
-    
-    if (sound) {
-        [_soundSwitch setOn:YES];
-        [userDefault setObject:[NSNumber numberWithBool:_soundSwitch.isOn] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
-        [userDefault synchronize];
-    } else {
-        [_soundSwitch setOn:[sound boolValue]];
-    }
     
     [_soundSwitch addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventTouchUpInside];
     
     _shakeSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(320 - 60, 5, 60, 34)];
     
-    if (shake) {
-        [_shakeSwitch setOn:YES];
-        [userDefault setObject:[NSNumber numberWithBool:_shakeSwitch.isOn] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
-        [userDefault synchronize];
-    } else {
-        [_shakeSwitch setOn:[sound boolValue]];
-    }
     [_shakeSwitch addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventTouchUpInside];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMCustomUserInfoDidInitializeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMReloadMainPhotoNotification([g_pIMMyself customUserID]) object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMReloadMainPhotoNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didLogout) name:IMLogoutNotification object:nil];
 }
 
@@ -120,6 +102,7 @@
     [super viewWillAppear:animated];
     
     [_tableView reloadData];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -245,6 +228,17 @@
             [cell addSubview:_soundSwitch];
         }
         
+        NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+        
+        NSNumber *sound = [userDefault objectForKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+        
+        if (!sound) {
+            [_soundSwitch setOn:YES];
+            [userDefault setObject:[NSNumber numberWithBool:_soundSwitch.isOn] forKey:[NSString stringWithFormat:@"sound:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        } else {
+            [_soundSwitch setOn:[sound boolValue]];
+        }
     }else if ([indexPath section] == 2 && [indexPath row] == 1) {
         [[cell textLabel] setText:@"震动"];
         [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
@@ -252,6 +246,18 @@
         if (![[[cell contentView] subviews] containsObject:_shakeSwitch]) {
             [cell addSubview:_shakeSwitch];
         }
+        
+        NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+        NSNumber *shake = [userDefault objectForKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+        
+        if (!shake) {
+            [_shakeSwitch setOn:YES];
+            [userDefault setObject:[NSNumber numberWithBool:_shakeSwitch.isOn] forKey:[NSString stringWithFormat:@"shake:%@",[g_pIMMyself customUserID]]];
+            [userDefault synchronize];
+        } else {
+            [_shakeSwitch setOn:[shake boolValue]];
+        }
+        
     }else if ([indexPath section] == 3) {
         [[cell textLabel] setText:@"版本信息"];
         [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
@@ -336,6 +342,10 @@
 #pragma mark - notification
 
 - (void)reloadData:(NSNotification *)notification {
+    if (![notification.object isEqual:[g_pIMMyself customUserID]]) {
+        return;
+    }
+    
     [_tableView reloadData];
 }
 

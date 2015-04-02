@@ -68,7 +68,7 @@
     
     [_usernameLabel setText:_customUserID];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage) name:IMReloadMainPhotoNotification(customUserID) object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage:) name:IMReloadMainPhotoNotification object:nil];
 }
 
 - (void)awakeFromNib
@@ -88,7 +88,11 @@
     [_headView setImage:_headPhoto];
 }
 
-- (void)reloadHeadImage {
+- (void)reloadHeadImage:(NSNotification *)note {
+    if (![note.object isEqual:_customUserID]) {
+        return;
+    }
+    
     _headPhoto = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
     if (_headPhoto == nil) {

@@ -117,10 +117,12 @@
             image = [UIImage imageNamed:@"IM_head_male.png"];
         }
         
+        __weak NSString *customUserID = [_searchBar text];
+        
         [g_pIMSDK requestMainPhotoOfUser:[_searchBar text] success:^(UIImage *mainPhoto) {
             if (mainPhoto) {
                 [cellView setHeadPhoto:mainPhoto];
-                [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification([_searchBar text]) object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:IMReloadMainPhotoNotification object:customUserID];
             }
         } failure:^(NSString *error) {
             

@@ -104,6 +104,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removedByGroupManager) name:IMRemovedGroupNotification(_groupID) object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupHasBeenDeleted) name:IMDeleteGroupNotification(_groupID) object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showGroupMemberName:) name:IMShowGroupMemberNameNotification(_groupID) object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:IMReloadMainPhotoNotification object:nil];
     
 }
 
@@ -165,6 +166,14 @@
     
     [controller setGroupInfo:_groupInfo];
     [[self navigationController] pushViewController:controller animated:YES];
+}
+
+- (void)reloadData:(NSNotification *)note {
+    if (![[_groupInfo memberList] containsObject:note.object]) {
+        return;
+    }
+    
+    [_groupChatView reloadData];
 }
 
 

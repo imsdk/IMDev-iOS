@@ -15,14 +15,8 @@
 
 @optional
 
-/**
- 在显示每一行时，会回调该方法，开发者可在该方法中自定义需要显示的名称
- */
 - (NSString *)groupChatView:(IMGroupChatView *)groupChatView titleForCustomUserID:(NSString *)customUserID;
 
-/**
- 在显示每一行时，会回调该方法，开发者可在该方法中自定义需要显示的图片
- */
 - (UIImage *)groupChatView:(IMGroupChatView *)groupChatView imageForCustomUserID:(NSString *)customUserID;
 
 @end
@@ -59,6 +53,11 @@
 @end
 
 @interface IMGroupChatView : UIView
+
+/**
+ 刷新聊天界面
+ */
+- (void)reloadData;
 
 /**
  群组聊天界面数据源
