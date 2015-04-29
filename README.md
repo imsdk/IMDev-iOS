@@ -54,14 +54,14 @@ IMDev——爱萌开发者，是由爱萌基于IM SDK开发并完全开源的的
 
 ##成功编译“爱萌开发者”真机效果
 * 最近联系人界面
-![img](http://static.oschina.net/uploads/code/201503/23165540_cmod.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_cmod.png)
 * 好友列表
-![img](http://static.oschina.net/uploads/code/201503/23165540_6DcO.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_6DcO.png)
 * 一对一聊天界面
-![img](http://static.oschina.net/uploads/code/201503/23165540_OkIN.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_OkIN.png)
 * 群聊界面
-![img](http://static.oschina.net/uploads/code/201504/02162330_aldW.png)
+[img](http://static.oschina.net/uploads/code/201504/02162330_aldW.png)
 * 周围用户界面
-![img](http://static.oschina.net/uploads/code/201503/23165540_8Zsh.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_8Zsh.png)
 
 加入我们，世界因你而不同--imsdk
