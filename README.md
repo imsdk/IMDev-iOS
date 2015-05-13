@@ -64,4 +64,4 @@ IMDev——爱萌开发者，是由爱萌基于IM SDK开发并完全开源的的
 * 周围用户界面
 [img](http://static.oschina.net/uploads/code/201503/23165540_8Zsh.png)
 
-加入我们，世界因你而不同--imsdk
+共同跨入社交新时代！--imsdk
