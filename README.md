@@ -1,11 +1,15 @@
 IMDev-iOS
 =========
 
-IMDev——爱萌开发者，是由爱萌基于IMSDK开发并完全开源的的第一款IM APP，面向于开发者群体。
+IMDev——爱萌开发者，是由爱萌基于IM SDK开发并完全开源的的第一款IM APP，
 
-最新版本号：v1.2.5 修复了群聊bug
+已经上架到苹果 app sotre,是一个完整的IM应用，我们会持续更新分享给大家，
 
-## 如何嵌入IMSDK到现有工程
+期待大家能找出bug,及时修正，也欢迎大家随时吐槽，请入QQ群：99823660
+
+截止2015-04-02 最新版本号：v1.2.5 修复了群聊bug
+
+## 一分钟集成到现有工程
 
 * 1、下载IMSDK，并整合到现有项目中；
 * 2、添加必要的系统框架，配置编译选项；
@@ -14,7 +18,7 @@ IMDev——爱萌开发者，是由爱萌基于IMSDK开发并完全开源的的�
 
 1、下载IMSDK，并整合到现有项目中 
 
-* a、进入IMSDK官网下载iOS无界面版IMSDK
+* a、进入IMSDK官网下载iOS无界面版（适合高级定制的开发者）IMSDK
 ![img](http://docs.imsdk.im/download/attachments/1343489/%E4%B8%8B%E8%BD%BD.jpg?version=1&modificationDate=1415244531000&api=v2&effects=border-polaroid,blur-border)
 
 * b、将下载到的文件解压，得到一个IMSDKDemo的目录
@@ -31,8 +35,8 @@ IMDev——爱萌开发者，是由爱萌基于IMSDK开发并完全开源的的�
 
 3、注册成为IMSDK开发者，并创建一个应用
 
-* a、打开浏览器，输入imsdk.im进入官网填写资料，注册开发者信息：
-![img](http://docs.imsdk.im/download/attachments/1343489/%E6%B3%A8%E5%86%8C.jpg?version=1&modificationDate=1411802147000&api=v2&effects=border-polaroid,blur-border)
+* a、打开浏览器，输入imsdk.im进入官网，在右上角“注册”按钮，按指引填写资料.
+<!-- ![img](http://docs.imsdk.im/download/attachments/1343489/%E6%B3%A8%E5%86%8C.jpg?version=1&modificationDate=1411802147000&api=v2&effects=border-polaroid,blur-border) -->
 
 * b、添加应用，获取appKey
 ![img](http://docs.imsdk.im/download/attachments/1343489/%E6%B7%BB%E5%8A%A0%E5%BA%94%E7%94%A8.jpeg?version=1&modificationDate=1411802127000&api=v2&effects=border-polaroid,blur-border)
@@ -48,14 +52,16 @@ IMDev——爱萌开发者，是由爱萌基于IMSDK开发并完全开源的的�
 4、参照 [here](http://docs.imsdk.im/pages/viewpage.action?pageId=1343957) 中的API接口文档实现IM功能。
 
 
-##嵌入IMSDK之后的效果图
+##成功编译“爱萌开发者”真机效果
 * 最近联系人界面
-![img](http://static.oschina.net/uploads/code/201503/23165540_cmod.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_cmod.png)
 * 好友列表
-![img](http://static.oschina.net/uploads/code/201503/23165540_6DcO.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_6DcO.png)
 * 一对一聊天界面
-![img](http://static.oschina.net/uploads/code/201503/23165540_OkIN.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_OkIN.png)
 * 群聊界面
-![img](http://static.oschina.net/uploads/code/201504/02162330_aldW.png)
+[img](http://static.oschina.net/uploads/code/201504/02162330_aldW.png)
 * 周围用户界面
-![img](http://static.oschina.net/uploads/code/201503/23165540_8Zsh.png)
+[img](http://static.oschina.net/uploads/code/201503/23165540_8Zsh.png)
+
+共同跨入社交新时代！--imsdk
