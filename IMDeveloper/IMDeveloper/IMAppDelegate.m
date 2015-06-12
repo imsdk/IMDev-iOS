@@ -13,6 +13,7 @@
 #import "IMRootViewController.h"
 #import "IMLoginViewController.h"
 #import "IMDefine.h"
+#import "IMUserDialogViewController.h"
 
 //IMSDK Headers
 #import "IMSDK.h"
@@ -90,7 +91,4 @@
     NSLog(@"failed to register for remote notifications with error: %@",error);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    
-}
 @end

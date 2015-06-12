@@ -11,6 +11,7 @@
 
 //IMSDK Headers
 #import "IMSDK+MainPhoto.h"
+#import "IMSDK+Nickname.h"
 
 @implementation IMContactTableViewCell {
     UIImageView *_headView;
@@ -58,10 +59,20 @@
 
 - (void)setCustomUserID:(NSString *)customUserID {
     _customUserID = customUserID;
-    [_usernameLabel setText:customUserID];
+    
+    NSString *showText = nil;
+    NSString *nickname = [g_pIMSDK nicknameOfUser:customUserID];
+    
+    if ([nickname length]) {
+        showText = [NSString stringWithFormat:@"%@（%@）",_customUserID,nickname];
+    } else {
+        showText = _customUserID;
+    }
+    [_usernameLabel setText:showText];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage:) name:IMReloadMainPhotoNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadNickName:) name:IMNickNameUpdatedNotification object:nil];
 }
 
 - (void)awakeFromNib
@@ -88,5 +99,21 @@
     }
     
     [_headView setImage:_headPhoto];
+}
+
+- (void)reloadNickName:(NSNotification *)note {
+    if (![note.object isEqualToString:_customUserID]) {
+        return;
+    }
+    
+    NSString *showText = nil;
+    NSString *nickname = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([nickname length]) {
+        showText = [NSString stringWithFormat:@"%@（%@）",_customUserID,nickname];
+    } else {
+        showText = _customUserID;
+    }
+    [_usernameLabel setText:showText];
 }
 @end

@@ -12,6 +12,7 @@
 
 //IMSDK Headers
 #import "IMSDK+MainPhoto.h"
+#import "IMSDK+Nickname.h"
 
 @implementation IMAroundViewCell {
     UIImageView *_headView;
@@ -87,10 +88,17 @@
 - (void)setCustomUserID:(NSString *)customUserID {
     _customUserID = customUserID;
     
-    [_customUserIDLabel setText:_customUserID];
+    NSString *nickName = [g_pIMSDK nicknameOfUser:customUserID];
+    
+    if ([nickName length] == 0) {
+        nickName = _customUserID;
+    }
+    
+    [_customUserIDLabel setText:nickName];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage:) name:IMReloadMainPhotoNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadNickName:) name:IMNickNameUpdatedNotification object:nil];
 }
 
 - (void)setSignature:(NSString *)signature {
@@ -134,6 +142,20 @@
     }
     
     [_headView setImage:_headPhoto];
+}
+
+- (void)reloadNickName:(NSNotification *)note {
+    if (![note.object isEqualToString:_customUserID]) {
+        return;
+    }
+    
+    NSString *nickName = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([nickName length] == 0) {
+        nickName = _customUserID;
+    }
+    
+    [_customUserIDLabel setText:nickName];
 }
 
 @end

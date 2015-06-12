@@ -205,7 +205,6 @@
     } else {
         [_totalNumLabel setText:@""];
         [_totalNumLabel setCenter:CGPointMake(160, 180)];
-        
     }
 }
 
@@ -274,7 +273,7 @@
                 continue;
             }
             
-            NSRange range = [[[POAPinyin convert:customUserID] uppercaseString] rangeOfString:[searchString uppercaseString]];
+            NSRange range = [[customUserID uppercaseString] rangeOfString:[searchString uppercaseString]];
             
             if (range.location != NSNotFound) {
                 [resultArray addObject:customUserID];

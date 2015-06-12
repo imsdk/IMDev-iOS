@@ -43,24 +43,34 @@
     [_tableView setDelegate:self];
     [[self view] addSubview:_tableView];
     
+    if (_type != 2) {
+        _textView = [[UITextView alloc] initWithFrame:CGRectMake(10, 20, 300, 200)];
+        
+        [[_textView layer] setCornerRadius:5.0f];
+        [_textView setText:_content];
+        [_textView setFont:[UIFont systemFontOfSize:15.0f]];
+        [_textView becomeFirstResponder];
+        [_textView setDelegate:self];
+        
+        UIView *tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 240)];
+        
+        [tableHeaderView setBackgroundColor:[UIColor clearColor]];
+        [tableHeaderView addSubview:_textView];
+        [_tableView setTableHeaderView:tableHeaderView];
+    }
+    
     switch (_type) {
+        case 1:
+            [[self navigationController] setTitle:@"修改昵称"];
+            break;
         case 2:
+            [[self navigationController] setTitle:@"修改性别"];
+            break;
         case 3:
-        {
-            _textView = [[UITextView alloc] initWithFrame:CGRectMake(10, 20, 300, 200)];
-            
-            [[_textView layer] setCornerRadius:5.0f];
-            [_textView setText:_content];
-            [_textView setFont:[UIFont systemFontOfSize:15.0f]];
-            [_textView becomeFirstResponder];
-            [_textView setDelegate:self];
-            
-            UIView *tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 240)];
-            
-            [tableHeaderView setBackgroundColor:[UIColor clearColor]];
-            [tableHeaderView addSubview:_textView];
-            [_tableView setTableHeaderView:tableHeaderView];
-        }
+            [[self navigationController] setTitle:@"修改地区"];
+            break;
+        case 4:
+            [[self navigationController] setTitle:@"修改个性签名"];
             break;
             
         default:
@@ -83,7 +93,7 @@
 }
 
 - (void)rightBarButtonItemClick:(id)sender {
-    if (_type == 1) {
+    if (_type == 2) {
         if ([_lastSelectIndex row] == 0) {
             _content = @"男";
         }else {
@@ -104,7 +114,7 @@
 #pragma mark - tableview datasource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (_type == 1) {
+    if (_type == 2) {
         return 2;
     }
     
@@ -114,7 +124,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     
-    if (_type == 1) {
+    if (_type == 2) {
         if ([indexPath row] == 0) {
             [[cell textLabel] setText:@"男"];
         } else {
@@ -158,12 +168,17 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
 
-    if (_type == 2) {
+    
+    if (_type == 3) {
         if ([[textView text] length] + [text length] > 20 ) {
             return NO;
         }
-    } else if(_type == 3) {
+    } else if(_type == 4) {
         if ([[textView text] length] + [text length] > 50 ) {
+            return NO;
+        }
+    } else if(_type == 1) {
+        if ([[textView text] length] + [text length] > 10) {
             return NO;
         }
     }

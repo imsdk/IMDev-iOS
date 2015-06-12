@@ -19,6 +19,7 @@
 #import "IMSDK+MainPhoto.h"
 #import "IMSDK+CustomUserInfo.h"
 #import "IMMyself+RecentContacts.h"
+#import "IMSDK+Nickname.h"
 
 @interface IMUserDialogViewController ()<IMChatViewDelegate, IMChatViewDataSource>
 
@@ -69,7 +70,12 @@
     }
     [[self view] setBackgroundColor:[UIColor whiteColor]];
     
-    [_titleLabel setText:_customUserID];
+    NSString *title = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([title length] == 0) {
+        title = _customUserID;
+    }
+    [_titleLabel setText:title];
     
     CGFloat height = 480 - 64;
     
@@ -93,6 +99,15 @@
     [view setDelegate:self];
     [view setDataSource:self];
     [[self view] addSubview:view];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    NSString *title = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([title length] == 0) {
+        title = _customUserID;
+    }
+    [_titleLabel setText:title];
 }
 
 - (void)didReceiveMemoryWarning

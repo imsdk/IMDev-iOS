@@ -17,6 +17,7 @@
 #import "IMMyself+CustomUserInfo.h"
 #import "IMSDK+MainPhoto.h"
 #import "IMMyself+MainPhoto.h"
+#import "IMMyself+Nickname.h"
 
 @interface IMMyselfInfoViewController ()<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, IMMyselfInfoEditDelegate>
 
@@ -29,6 +30,7 @@
     NSString *_sex;
     NSString *_location;
     NSString *_signature;
+    NSString *_nickname;
     
     BDKNotifyHUD *_notify;
     NSString *_notifyText;
@@ -79,7 +81,7 @@
     if (section == 0) {
         return 1;
     } else {
-        return 4;
+        return 5;
     }
 }
 
@@ -103,16 +105,24 @@
         [[cell textLabel] setText:@"头像"];
     } else {
         if ([indexPath row] == 0) {
-            [[cell textLabel] setText:@"名字"];
+            [[cell textLabel] setText:@"账号"];
             [[cell detailTextLabel] setText:[g_pIMMyself customUserID]];
         } else if([indexPath row] == 1) {
+            [[cell textLabel] setText:@"昵称"];
+            
+            if ([_nickname length]) {
+                [[cell detailTextLabel] setText:_nickname];
+            } else {
+                [[cell detailTextLabel] setText:@"未设置"];
+            }
+        } else if([indexPath row] == 2) {
             [[cell textLabel] setText:@"性别"];
             if ([_sex length] > 0) {
                 [[cell detailTextLabel] setText:_sex];
             } else {
                 [[cell detailTextLabel] setText:@"男"];
             }
-        } else if([indexPath row] == 2) {
+        } else if([indexPath row] == 3) {
             [[cell textLabel] setText:@"地区"];
             if ([_location length] > 0) {
                 [[cell detailTextLabel] setText:_location];
@@ -167,9 +177,14 @@
         
         NSString *content = nil;
         
-        if ([_customInfoArray count] >= [indexPath row]) {
-            content = [_customInfoArray objectAtIndex:[indexPath row] - 1];
+        if ([indexPath row] == 1) {
+            content = [g_pIMMyself nickname];
+        } else {
+            if ([_customInfoArray count] >= [indexPath row] - 1) {
+                content = [_customInfoArray objectAtIndex:[indexPath row] - 2];
+            }
         }
+        
         
         [controller setDelegate:self];
         [controller setContent:content];
@@ -245,15 +260,35 @@
     switch (type) {
         case 1:
         {
+            _nickname = content;
+            
+            [_tableView reloadData];
+            
+            [g_pIMMyself commitNickname:content succuss:^{
+                _notifyText = @"修改成功";
+                _notifyImage = [UIImage imageNamed:@"IM_success_image.png"];
+                [self displayNotifyHUD];
+
+            } failure:^(NSString *error) {
+                _notifyText = @"修改信息失败";
+                _notifyImage = [UIImage imageNamed:@"IM_failed_image.png"];
+                [self displayNotifyHUD];
+                
+                [_tableView reloadData];
+            }];
+            return;
+        }
+        case 2:
+        {
             _sex = content;
         }
             break;
-        case 2:
+        case 3:
         {
             _location = content;
         }
             break;
-        case 3:
+        case 4:
         {
             _signature = content;
         }
@@ -317,6 +352,8 @@
     if ([_customInfoArray count] > 2) {
         _signature = [_customInfoArray objectAtIndex:2];
     }
+    
+    _nickname = [g_pIMMyself nickname];
     
     [_tableView reloadData];
 }

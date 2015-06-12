@@ -171,6 +171,8 @@
 
 - (void)logout {
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    
+    [_loginView viewWillAppear];
 }
 
 - (void)loginError:(NSString *)error {
@@ -216,20 +218,25 @@
         error = @"用户名只能由字母、数字、下划线、@符或点组成,长度不能超过32位，也不能少于2位";
     } else if ([error isEqualToString:@"Password length should between 2 to 32 characters"]) {
         error = @"密码长度不能超过32位，也不能少于2位";
-    } else if ([error isEqualToString:@"password不能为空字符串"]) {
+    } else if ([error isEqualToString:@"password不能为空字符串"] || [error isEqualToString:@"password不能为nil"]) {
         error = @"密码不能为空";
-    } else if ([error isEqualToString:@"customUserID不能为null"]){
+    } else if ([error isEqualToString:@"customUserID不能为null"] || [error isEqualToString:@"customUserID不能为空字符串"]){
         error = @"账号不能为空";
     } else if ([error isEqualToString:@"Time out"]) {
         error = @"登录超时";
     } else if ([error isEqualToString:@"CustomUserID Already Exist"]) {
         error = @"用户已经存在";
+    } else if ([error isEqualToString:@"CustomUserID is not exist"]) {
+        error = @"用户不存在";
+    } else if ([error isEqualToString:@"The passwords input twice are inconsistent"]) {
+        error = @"两次输入密码不一致";
     } else {
-        error = @"登录失败";
+        if (!error) {
+            error = @"登录失败";
+        }
     }
     
-    
-    [self performSelector:@selector(loginError:) withObject:error afterDelay:1.0];
+    [self performSelector:@selector(loginError:) withObject:error afterDelay:0.5];
 }
 
 - (void)loginActionStarted {

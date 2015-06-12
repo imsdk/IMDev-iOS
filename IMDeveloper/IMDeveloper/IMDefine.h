@@ -33,3 +33,4 @@
 #define IMShowGroupMemberNameNotification(groupID) [NSString stringWithFormat:@"IMShowGroupMemberNameNotification%@",groupID]
 #define IMReceiveUserMessageNotification @"IMReceiveUserMessageNotification"
 #define IMUnReadMessageChangedNotification @"IMUnReadMessageChangedNotification"
+#define IMNickNameUpdatedNotification @"IMNickNameUpdatedNotification"

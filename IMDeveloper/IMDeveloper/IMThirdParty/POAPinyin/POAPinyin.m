@@ -578,7 +578,7 @@ static short *cache = NULL;
 //输入中文，返回拼音。
 + (NSString *) convert:(NSString *) hzString
 {
-    
+    hzString =@"我不知道e";
 
     NSString * pyString = @"";
  //   int chrAsc = 0;

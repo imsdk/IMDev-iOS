@@ -21,6 +21,7 @@
 #import "IMMyself+Group.h"
 #import "IMSDK+Group.h"
 #import "IMMyself+RecentGroups.h"
+#import "IMSDK+Nickname.h"
 
 @interface IMGroupInfoViewController ()<UITableViewDataSource, UITableViewDelegate, IMGroupMemberHeadersViewDelegate, IMGroupInfoEditDelegate, IMGroupInfoUpdateDelegate, UIActionSheetDelegate>
 
@@ -257,7 +258,17 @@
             [[cell detailTextLabel] setNumberOfLines:0];
         } else if([indexPath row] == 2) {
             [[cell textLabel] setText:@"群创建者"];
-            [[cell detailTextLabel] setText:[_groupInfo ownerCustomUserID]];
+            
+            NSString *showText = nil;
+            NSString *nickname = [g_pIMSDK nicknameOfUser:[_groupInfo ownerCustomUserID]];
+            
+            if ([nickname length] > 0) {
+                showText = [NSString stringWithFormat:@"%@(%@)",[_groupInfo ownerCustomUserID],nickname];
+            } else {
+                showText = [_groupInfo ownerCustomUserID];
+            }
+            
+            [[cell detailTextLabel] setText:showText];
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         } else {
             [[cell textLabel] setText:@"群聊大小"];

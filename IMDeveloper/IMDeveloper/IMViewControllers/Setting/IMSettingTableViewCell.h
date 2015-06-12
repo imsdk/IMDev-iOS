@@ -11,7 +11,7 @@
 @interface IMSettingTableViewCell : UITableViewCell
 
 @property (nonatomic, strong) UIImage *headPhoto;
-@property (nonatomic, copy) NSString *location;
 @property (nonatomic, copy) NSString *customUserID;
+@property (nonatomic, copy) NSString *nickname;
 
 @end

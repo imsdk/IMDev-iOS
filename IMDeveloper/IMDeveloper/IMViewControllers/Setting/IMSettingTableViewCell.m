@@ -12,11 +12,13 @@
 //IMSDK Headers
 #import "IMSDK+MainPhoto.h"
 #import "IMSDK+CustomUserInfo.h"
+#import "IMSDK+Nickname.h"
 
 @implementation IMSettingTableViewCell {
     UIImageView *_headView;
     UILabel *_usernameLabel;
     UILabel *_locationLabel;
+    UILabel *_customUserIDLabel;
 }
 
 - (void)dealloc
@@ -43,32 +45,33 @@
         [_usernameLabel setFont:[UIFont systemFontOfSize:20]];
         [[self contentView] addSubview:_usernameLabel];
         
-        _locationLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, 42, 200, 26)];
+        _customUserIDLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, 48, 200, 28)];
         
-        [_locationLabel setTextColor:[UIColor grayColor]];
-        [_locationLabel setFont:[UIFont systemFontOfSize:15]];
-        [_locationLabel setBackgroundColor:[UIColor clearColor]];
-        [[self contentView] addSubview:_locationLabel];
+        [_customUserIDLabel setTextColor:[UIColor grayColor]];
+        [_customUserIDLabel setFont:[UIFont systemFontOfSize:15]];
+        [_customUserIDLabel setBackgroundColor:[UIColor clearColor]];
+        [[self contentView] addSubview:_customUserIDLabel];
     }
     return self;
 }
 
-- (void)setLocation:(NSString *)location {
-    _location = location;
+- (void)setNickname:(NSString *)nickname {
+    _nickname = nickname;
     
-    if (_location == nil) {
-        _location = @"未填写";
+    if ([nickname length] == 0) {
+        _nickname = _customUserID;
     }
     
-    [_locationLabel setText:[NSString stringWithFormat:@"地区:%@",location]];
+    [_usernameLabel setText:_nickname];
 }
 
 - (void) setCustomUserID:(NSString *)customUserID {
     _customUserID = customUserID;
     
-    [_usernameLabel setText:_customUserID];
+    [_customUserIDLabel setText:[NSString stringWithFormat:@"爱萌账号:%@",_customUserID]];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage:) name:IMReloadMainPhotoNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadNickName:) name:IMNickNameUpdatedNotification object:nil];
 }
 
 - (void)awakeFromNib
@@ -113,6 +116,20 @@
     }
     
     [_headView setImage:_headPhoto];
+}
+
+- (void)reloadNickName:(NSNotification *)note {
+    if (![note.object isEqualToString:_customUserID]) {
+        return;
+    }
+    
+    NSString *nickName = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([nickName length] == 0) {
+        nickName = _customUserID;
+    }
+    
+    [_usernameLabel setText:nickName];
 }
 
 @end

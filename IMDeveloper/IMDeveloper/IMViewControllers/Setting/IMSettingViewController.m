@@ -21,6 +21,7 @@
 #import "IMSDK+MainPhoto.h"
 #import "IMMyself+CustomUserInfo.h"
 #import "IMSDK+CustomUserInfo.h"
+#import "IMSDK+Nickname.h"
 
 @interface IMSettingViewController ()<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
@@ -83,7 +84,6 @@
     } failure:^(NSString *error) {
         
     }];
-    
     
     _soundSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(320 - 60, 5, 60, 34)];
     
@@ -195,20 +195,14 @@
         
         [(IMSettingTableViewCell *)cell setHeadPhoto:headPhoto];
         
-        NSString *customInfo = [g_pIMMyself customUserInfo];
+        NSString *nickname = [g_pIMSDK nicknameOfUser:[g_pIMMyself customUserID]];
         
-        NSArray *array = [customInfo componentsSeparatedByString:@"\n"];
-        
-        NSString *location = nil;
-        if ([array count] > 2) {
-            location = [array objectAtIndex:1];
+        if ([nickname length] == 0) {
+            nickname = [g_pIMSDK customUserID];
         }
         
-        if (location == nil) {
-            location = @"未填写";
-        }
+        [(IMSettingTableViewCell *)cell setNickname:nickname];
         
-        [(IMSettingTableViewCell *)cell setLocation:location];
         [(IMSettingTableViewCell *)cell setCustomUserID:[g_pIMMyself customUserID]];
         
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];

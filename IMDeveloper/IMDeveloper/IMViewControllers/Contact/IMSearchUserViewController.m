@@ -126,6 +126,8 @@
     
     [cellView setHeadPhoto:image];
     [cellView setCustomUserID:[_searchBar text]];
+    [cellView setDistance:[NSString stringWithFormat:@"爱萌账号：%@",[_searchBar text]]];
+    
     
     NSString *customUserInfo = [g_pIMSDK customUserInfoWithCustomUserID:[_searchBar text]];
     
@@ -152,6 +154,7 @@
     for (UIView *view in [[cell contentView] subviews]) {
         [view removeFromSuperview];
     }
+    
     [[cell contentView] addSubview:cellView];
     
     return cell;

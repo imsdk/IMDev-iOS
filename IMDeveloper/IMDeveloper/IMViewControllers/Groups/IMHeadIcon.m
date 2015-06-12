@@ -13,6 +13,7 @@
 //IMSDK Headers
 #import "IMSDK+MainPhoto.h"
 #import "IMSDK+CustomUserInfo.h"
+#import "IMSDK+Nickname.h"
 
 @implementation IMHeadIcon {
     UIImage *_headImage;
@@ -62,10 +63,18 @@
     }
     
     _customUserID = customUserID;
-    [_nameLabel setText:customUserID];
+    
+    NSString *nickname = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([nickname length] == 0) {
+        nickname = _customUserID;
+    }
+    
+    [_nameLabel setText:nickname];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHeadImage:) name:IMReloadMainPhotoNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadNickName:) name:IMNickNameUpdatedNotification object:nil];
     
     _headImage = [g_pIMSDK mainPhotoOfUser:_customUserID];
     
@@ -111,6 +120,20 @@
     }
     
     [_headView setImage:_headImage];
+}
+
+- (void)reloadNickName:(NSNotification *)note {
+    if (![note.object isEqualToString:_customUserID]) {
+        return;
+    }
+    
+    NSString *nickName = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([nickName length] == 0) {
+        nickName = _customUserID;
+    }
+    
+    [_nameLabel setText:nickName];
 }
 
 - (void)setDeleteStatus:(BOOL)deleteStatus {

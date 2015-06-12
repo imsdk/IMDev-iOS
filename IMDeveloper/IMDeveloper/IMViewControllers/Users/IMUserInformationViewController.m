@@ -19,6 +19,8 @@
 #import "IMSDK+CustomUserInfo.h"
 #import "IMMyself+Relationship.h"
 #import "IMMyself+RecentContacts.h"
+#import "IMMyself+Nickname.h"
+#import "IMSDK+Nickname.h"
 
 @interface IMUserInformationViewController () <UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
@@ -38,7 +40,8 @@
     UIView *_tableHeaderView;
     UIImageView *_headView;
     UILabel *_userNameLabel;
-    UILabel *_sexLabel;
+    UILabel *_customUserIDLabel;
+    UIImageView *_sexImageView;
     
     UIView *_tableFooterView;
     UIButton *_removeBlacklistBtn;
@@ -94,18 +97,31 @@
     
     _userNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(_headView.right + 10, 10, 200, 30)];
     
+    NSString *nickname = [g_pIMSDK nicknameOfUser:_customUserID];
+    
+    if ([nickname length] == 0) {
+        nickname = _customUserID;
+    }
+    
     [_userNameLabel setBackgroundColor:[UIColor clearColor]];
-    [_userNameLabel setText:_customUserID];
+    [_userNameLabel setText:nickname];
     [_userNameLabel setTextColor:[UIColor blackColor]];
     [_userNameLabel setFont:[UIFont boldSystemFontOfSize:16]];
     [_tableHeaderView addSubview:_userNameLabel];
     
-    _sexLabel = [[UILabel alloc] initWithFrame:CGRectMake(_headView.right + 10, _userNameLabel.bottom, 200, 30)];
+    [self resizeView:nickname];
     
-    [_sexLabel setBackgroundColor:[UIColor clearColor]];
-    [_sexLabel setTextColor:[UIColor grayColor]];
-    [_sexLabel setFont:[UIFont systemFontOfSize:15]];
-    [_tableHeaderView addSubview:_sexLabel];
+    _customUserIDLabel = [[UILabel alloc] initWithFrame:CGRectMake(_headView.right + 10, _userNameLabel.bottom, 200, 30)];
+    
+    [_customUserIDLabel setBackgroundColor:[UIColor clearColor]];
+    [_customUserIDLabel setTextColor:[UIColor grayColor]];
+    [_customUserIDLabel setFont:[UIFont systemFontOfSize:15]];
+    [_customUserIDLabel setText:[NSString stringWithFormat:@"爱萌账号：%@",_customUserID]];
+    [_tableHeaderView addSubview:_customUserIDLabel];
+    
+    _sexImageView = [[UIImageView alloc] initWithFrame:CGRectMake(_userNameLabel.right + 10, _userNameLabel.top + 5, 20, 20)];
+    
+    [_tableHeaderView addSubview:_sexImageView];
     
     _tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 300)];
     
@@ -166,6 +182,18 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)resizeView:(NSString *)nickname {
+    CGSize size;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
+        size = [nickname sizeWithFont:[UIFont systemFontOfSize:18.0f] constrainedToSize:CGSizeMake(200, 100000) lineBreakMode:NSLineBreakByCharWrapping];
+    } else {
+        size = [nickname boundingRectWithSize:CGSizeMake(200, 100000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:18.0f]} context:nil].size;
+    }
+    
+    [_userNameLabel setFrame:CGRectMake(_userNameLabel.left, _userNameLabel.top, size.width, 30)];
+    [_sexImageView setFrame:CGRectMake(_userNameLabel.right + 10, _userNameLabel.top + 5, 20, 20)];
+}
+
 - (void)rightBarButtonItenClick:(id)sender {
     if (sender != _rightBarButtonItem) {
         return;
@@ -224,7 +252,14 @@
         if (![sex isEqualToString:@"男"] && ![sex isEqualToString:@"女"] ) {
             sex = @"男";
         }
-        [_sexLabel setText:sex];
+        
+        if ([sex isEqualToString:@"男"]) {
+            [_sexImageView setImage:[UIImage imageNamed:@"IM_Male.png"]];
+        } else {
+            [_sexImageView setImage:[UIImage imageNamed:@"IM_Female.png"]];
+        }
+    } else {
+        [_sexImageView setImage:[UIImage imageNamed:@"IM_Male.png"]];
     }
     
     [_tableView reloadData];
@@ -243,13 +278,37 @@
             if (![sex isEqualToString:@"男"] && ![sex isEqualToString:@"女"] ) {
                 sex = @"男";
             }
-            [_sexLabel setText:sex];
+            
+            if ([sex isEqualToString:@"男"]) {
+                [_sexImageView setImage:[UIImage imageNamed:@"IM_Male.png"]];
+            } else {
+                [_sexImageView setImage:[UIImage imageNamed:@"IM_Female.png"]];
+            }
+        } else {
+            [_sexImageView setImage:[UIImage imageNamed:@"IM_Male.png"]];
         }
         
         [_tableView reloadData];
         
     } failure:^(NSString *error) {
         NSLog(@"load custom user information failed for %@",error);
+    }];
+    
+    NSString *nickname = [g_pIMSDK nicknameOfUser:_customUserID];
+    if ([nickname length] == 0) {
+        nickname = _customUserID;
+    }
+    
+    [self resizeView:nickname];
+    
+    [g_pIMSDK requestNicknameWithCustomUserID:_customUserID success:^(NSString *nickname) {
+        if ([nickname length]) {
+            [self resizeView:nickname];
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:IMNickNameUpdatedNotification object:_customUserID];
+    } failure:^(NSString *error) {
+        
     }];
 }
 

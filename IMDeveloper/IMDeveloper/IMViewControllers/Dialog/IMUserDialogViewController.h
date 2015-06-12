@@ -12,4 +12,6 @@
 
 @property (nonatomic, copy) NSString *customUserID;
 
+@property (nonatomic, copy) NSString *identifier;
+
 @end
