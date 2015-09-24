@@ -84,6 +84,10 @@
     
     [[self navigationItem] setLeftBarButtonItem:_leftBarButtonItem];
     
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
+    [_doneBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
+    [_leftBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
+    
     CGRect rect = [[self view] bounds];
     
     _tableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
@@ -93,6 +97,7 @@
     [_tableView setEditing:YES];
     [_tableView setBackgroundColor:RGB(242, 242, 242)];
     [_tableView setSectionIndexBackgroundColor:[UIColor clearColor]];
+    [_tableView setSectionIndexColor:RGB(6, 191, 4)];
     [[self view] addSubview:_tableView];
     
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];

@@ -13,6 +13,7 @@
 #import "IMModifyPasswordViewController.h"
 #import "IMBlackListViewController.h"
 #import "IMVersionInformationViewController.h"
+#import "IMUserDialogViewController.h"
 
 #import "MBProgressHUD.h"
 
@@ -45,8 +46,8 @@
         // Custom initialization
         [self setTitle:@"我的"];
         [_titleLabel setText:@"我的"];
-        [[self tabBarItem] setImage:[UIImage imageNamed:@"IM_setting_normal.png"]];
-
+        [[self tabBarItem] setImage:[UIImage imageNamed:@"tab_me.png"]];
+        [[self tabBarItem] setSelectedImage:[UIImage imageNamed:@"tab_me_.png"]];
     }
     return self;
 }
@@ -198,7 +199,7 @@
         NSString *nickname = [g_pIMSDK nicknameOfUser:[g_pIMMyself customUserID]];
         
         if ([nickname length] == 0) {
-            nickname = [g_pIMSDK customUserID];
+            nickname = [g_pIMMyself customUserID];
         }
         
         [(IMSettingTableViewCell *)cell setNickname:nickname];
@@ -253,7 +254,7 @@
         }
         
     }else if ([indexPath section] == 3) {
-        [[cell textLabel] setText:@"版本信息"];
+        [[cell textLabel] setText:@"联系客服"];
         [[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     }
@@ -293,8 +294,6 @@
 #pragma mark - tableview delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [_tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
     if ([indexPath section] == 0) {
         IMMyselfInfoViewController *controller = [[IMMyselfInfoViewController alloc] init];
         
@@ -313,8 +312,15 @@
     } else if ([indexPath section] == 2) {
         return;
     } else if ([indexPath section] == 3) {
-        IMVersionInformationViewController *controller = [[IMVersionInformationViewController alloc] init];
+//        IMVersionInformationViewController *controller = [[IMVersionInformationViewController alloc] init];
+//        
+//        [controller setHidesBottomBarWhenPushed:YES];
+//        [[self navigationController] pushViewController:controller animated:YES];
+        IMUserDialogViewController *controller = [[IMUserDialogViewController alloc] init];
         
+        [controller setIsCustomerSevice:YES];
+        [controller setTitle:@"客服"];
+        [controller setCustomUserID:@"kefu_104695"];
         [controller setHidesBottomBarWhenPushed:YES];
         [[self navigationController] pushViewController:controller animated:YES];
     }
@@ -330,6 +336,8 @@
         [actionSheet setActionSheetStyle:UIActionSheetStyleAutomatic];
         [actionSheet showFromTabBar:[self tabBarController].tabBar];
     }
+    
+    [_tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 

@@ -13,6 +13,7 @@
 #import "IMUserInformationViewController.h"
 #import "IMContactTableViewCell.h"
 #import "IMGroupListViewController.h"
+#import "IMShopListViewController.h"
 
 #import "pinyin.h"
 #import "POAPinyin.h"
@@ -22,7 +23,7 @@
 #import "IMSDK+MainPhoto.h"
 #import "IMSDK+CustomUserInfo.h"
 
-@interface IMContactViewController ()<UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface IMContactViewController ()<UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate,NSURLConnectionDelegate, NSURLConnectionDataDelegate>
 
 // add friends
 - (void)addFriends:(id)sender;
@@ -39,6 +40,7 @@
     NSMutableArray *_searchResult;
     NSMutableArray *_friendTitles;
     NSMutableDictionary *_sectionDic;
+    NSMutableData *_dataForConnection;
     
     //UI
     UIBarButtonItem *_rightBarButtonItem;
@@ -55,7 +57,8 @@
         // Custom initialization
         [self setTitle:@"联系人"];
         [_titleLabel setText:@"联系人"];
-        [[self tabBarItem] setImage:[UIImage imageNamed:@"IM_contact_normal.png"]];
+        [[self tabBarItem] setImage:[UIImage imageNamed:@"tab_contact.png"]];
+        [[self tabBarItem] setSelectedImage:[UIImage imageNamed:@"tab_contact_.png"]];
      
         _friendTitles = [[NSMutableArray alloc] initWithCapacity:32];
         _searchResult = [[NSMutableArray alloc] initWithCapacity:32];
@@ -76,6 +79,7 @@
     
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加" style:UIBarButtonItemStylePlain target:self action:@selector(addFriends:)];
     
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
     [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
     
     CGRect rect = [[self view] bounds];
@@ -88,6 +92,7 @@
     [_tableView setDelegate:self];
     [_tableView setBackgroundColor:RGB(242, 242, 242)];
     [_tableView setSectionIndexBackgroundColor:[UIColor clearColor]];
+    [_tableView setSectionIndexColor:RGB(6, 191, 4)];
     [[self view] addSubview:_tableView];
     
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
@@ -148,6 +153,7 @@
     if ([_friendList count] == 0) {
         [self loadData];
     }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -342,7 +348,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (tableView == _tableView) {
         if (section == 0) {
-            return 1;
+            return 2;
         }
         
         if ([_friendList count] <= section - 1) {
@@ -371,7 +377,11 @@
     if (tableView == _tableView) {
         //list
         if ([indexPath section] == 0) {
-            customUserID = @"群聊";
+            if ([indexPath row] == 0) {
+                customUserID = @"附近商家";
+            } else {
+                customUserID = @"群聊";
+            }
         } else  {
             NSMutableArray *array = nil;
             
@@ -403,7 +413,7 @@
     UIImage *image = nil;
     
     if ([indexPath section] == 0) {
-        image = [UIImage imageNamed:@"IM_head_default.png"];
+        image = [UIImage imageNamed:@"contact_group.png"];
     } else {
         image = [g_pIMSDK mainPhotoOfUser:customUserID];
     }
@@ -440,10 +450,18 @@
     
     if (_tableView == tableView) {
         if ([indexPath section] == 0) {
-            IMGroupListViewController *controller = [[IMGroupListViewController alloc] init];
+            if ([indexPath row] == 1) {
+                IMGroupListViewController *controller = [[IMGroupListViewController alloc] init];
+                
+                [controller setHidesBottomBarWhenPushed:YES];
+                [[self navigationController] pushViewController:controller animated:YES];
+            } else {
+                IMShopListViewController *controller = [[IMShopListViewController alloc] init];
+                
+                [controller setHidesBottomBarWhenPushed:YES];
+                [[self navigationController] pushViewController:controller animated:YES];
+            }
             
-            [controller setHidesBottomBarWhenPushed:YES];
-            [[self navigationController] pushViewController:controller animated:YES];
             return;
         }
         

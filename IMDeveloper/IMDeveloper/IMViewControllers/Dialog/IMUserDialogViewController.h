@@ -14,4 +14,6 @@
 
 @property (nonatomic, copy) NSString *identifier;
 
+@property (nonatomic, assign) BOOL isCustomerSevice;
+
 @end

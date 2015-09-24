@@ -48,6 +48,7 @@
     
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"创建群" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
     
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
     [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
     
     _groupList = [[NSMutableArray alloc] initWithCapacity:32];
@@ -87,6 +88,7 @@
     [_tableView setDelegate:self];
     [_tableView setBackgroundColor:RGB(242, 242, 242)];
     [_tableView setSectionIndexBackgroundColor:[UIColor clearColor]];
+    [_tableView setSectionIndexColor:RGB(6, 191, 4)];
     [[self view] addSubview:_tableView];
     
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
@@ -231,7 +233,7 @@ NSInteger GroupArray_sortByPinyin(IMGroupInfo *info1, IMGroupInfo *info2, void *
         cell = [[IMContactTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
     }
     
-    [cell setHeadPhoto:[UIImage imageNamed:@"IM_head_default.png"]];
+    [cell setHeadPhoto:[UIImage imageNamed:@"contact_group.png"]];
     
     if (tableView == _tableView) {
         if ([_groupList count] <= [indexPath row]) {

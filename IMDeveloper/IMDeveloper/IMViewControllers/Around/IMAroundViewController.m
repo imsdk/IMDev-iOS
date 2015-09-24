@@ -56,7 +56,8 @@
         [self setTitle:@"周边"];
         [_titleLabel setText:@"周边"];
         
-        [[self tabBarItem] setImage:[UIImage imageNamed:@"IM_around_normal.png"]];
+        [[self tabBarItem] setImage:[UIImage imageNamed:@"tab_nearby.png"]];
+        [[self tabBarItem] setSelectedImage:[UIImage imageNamed:@"tab_nearby_.png"]];
         
         _aroundList = [[NSMutableArray alloc] initWithCapacity:32];
     }

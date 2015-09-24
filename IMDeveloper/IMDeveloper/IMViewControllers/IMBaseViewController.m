@@ -26,7 +26,7 @@
         
         [_titleLabel setBackgroundColor:[UIColor clearColor]];
         [_titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
-        [_titleLabel setTextColor:[UIColor whiteColor]];
+        [_titleLabel setTextColor:[UIColor blackColor]];
         [_titleLabel setTextAlignment:NSTextAlignmentCenter];
         [[self navigationItem] setTitleView:_titleLabel];
         
@@ -58,12 +58,12 @@
     
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
         // Load resources for iOS 6.1 or earlier
-        self.navigationController.navigationBar.tintColor = RGB(44, 44, 44);
+//        self.navigationController.navigationBar.tintColor = RGB(44, 44, 44);
     }
     else {
         // Load resources for iOS 7 or later
-        self.navigationController.navigationBar.barTintColor = RGB(44, 44, 44);
-        [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+//        self.navigationController.navigationBar.barTintColor = RGB(44, 44, 44);
+        [self.navigationController.navigationBar setTintColor:[UIColor blackColor]];
         
     }
     
@@ -73,7 +73,7 @@
     [super viewWillAppear:animated];
     
     if ([[[UIDevice currentDevice] systemVersion] floatValue] > 6.9) {
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+//        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     }
 }
 

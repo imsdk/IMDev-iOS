@@ -11,6 +11,7 @@
 #import "IMDefine.h"
 #import "IMGroupDialogViewController.h"
 #import "IMUserInformationViewController.h"
+#import "IMMyself+RecentContacts.h"
 
 //IMSDK Headers
 #import "IMRecentContactsView.h"
@@ -21,6 +22,8 @@
 #import "IMMyself+RecentGroups.h"
 #import "IMSDK+CustomUserInfo.h"
 #import "IMSDK+MainPhoto.h"
+#import "IMSDK+CustomerService.h"
+#import "IMSDK+Nickname.h"
 
 @interface IMConversationViewController ()<IMRecentContactsViewDelegate, IMRecentContactsViewDatasource, UIAlertViewDelegate, IMRecentGroupsViewDatasource, IMRecentGroupsViewDelegate>
 
@@ -51,7 +54,8 @@
         // Custom initialization
         [self setTitle:@"消息"];
         [_titleLabel setText:@"消息"];
-        [[self tabBarItem] setImage:[UIImage imageNamed:@"IM_conversation_normal.png"]];
+        [[self tabBarItem] setImage:[UIImage imageNamed:@"tab_news.png"]];
+        [[self tabBarItem] setSelectedImage:[UIImage imageNamed:@"tab_news_.png"]];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginStatusChanged:) name:IMLoginStatusChangedNotification object:nil];
         
@@ -68,6 +72,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"群消息" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
+    
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
     
     [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
     
@@ -166,6 +172,35 @@
 
 #pragma mark - IMRecentContactView delegate
 
+- (NSString *)recentContactsView:(IMRecentContactsView *)recentContactsView titleForIndex:(NSInteger)index {
+    NSString *customUserID = [[g_pIMMyself recentContacts] objectAtIndex:index];
+    
+    if ([customUserID hasPrefix:@"kefu_"]) {
+        if ([customUserID isEqualToString:@"kefu_104695"]) {
+            return @"客服";
+        }
+        
+        IMServiceInfo *info = [g_pIMSDK serviceInfoWithCustomUserID:customUserID];
+        
+        if (info.serviceName) {
+            return info.serviceName;
+        } else {
+            [g_pIMSDK requestServiceInfoWithCustomUserID:customUserID success:^(IMServiceInfo *serviceInfo) {
+                [_recentContactsView reloadData];
+            } failure:^(NSString *error) {
+                
+            }];
+        }
+    }
+    
+    NSString * nickName = [g_pIMSDK nicknameOfUser:customUserID];
+    
+    if (nickName) {
+        return nickName;
+    }
+    return customUserID;
+}
+
 - (UIImage *)recentContactsView:(IMRecentContactsView *)recentContactsView imageForIndex:(NSInteger)index {
     NSString *customUserID = [[g_pIMMyself recentContacts] objectAtIndex:index];
     
@@ -199,6 +234,27 @@
     }
     
     _selectedCustomUserID = customUserID;
+    
+    if ([customUserID hasPrefix:@"kefu_"]) {
+        [g_pIMMyself clearUnreadChatMessageWithUser:customUserID];
+        [self setBadge];
+        
+        IMUserDialogViewController *controller = [[IMUserDialogViewController alloc] init];
+        
+        IMServiceInfo *info = [g_pIMSDK serviceInfoWithCustomUserID:customUserID];
+        
+        if ([customUserID isEqualToString:@"kefu_104695"]) {
+            [controller setTitle:@"客服"];
+        } else {
+            [controller setTitle:info.serviceName];
+        }
+        [controller setIsCustomerSevice:YES];
+        [controller setCustomUserID:customUserID];
+        [controller setHidesBottomBarWhenPushed:YES];
+        [[self navigationController] pushViewController:controller animated:YES];
+        
+        return;
+    }
     
     if (![g_pIMMyself isMyFriend:customUserID] && ![[g_pIMMyself customUserID] isEqualToString:customUserID]) {
         //if is not friend, enter information controller

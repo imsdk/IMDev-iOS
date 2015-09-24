@@ -7,6 +7,7 @@
 //
 
 #import "IMFriendRequestViewController.h"
+#import "IMDefine.h"
 
 //Third party
 #import "BDKNotifyHUD.h"
@@ -48,6 +49,7 @@
     [[self view] setBackgroundColor:[UIColor whiteColor]];
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick)];
     
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
     [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
     
     _tableView = [[UITableView alloc] initWithFrame:[[self view] bounds] style:UITableViewStyleGrouped];

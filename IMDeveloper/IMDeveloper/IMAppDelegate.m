@@ -25,6 +25,8 @@
 {
     [g_pIMSDK initWithAppKey:IMDeveloper_APPKey];
     
+    [[UITabBar appearance] setTintColor:RGB(6, 191, 4)];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     IMLoginViewController *controller = [[IMLoginViewController alloc] init] ;

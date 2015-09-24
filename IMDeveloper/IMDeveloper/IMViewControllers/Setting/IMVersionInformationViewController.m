@@ -52,10 +52,10 @@
     
     if ([indexPath row] == 0) {
         [[cell textLabel] setText:@"版本号"];
-        [[cell detailTextLabel] setText:@"v1.3.2"];
+        [[cell detailTextLabel] setText:@"v1.2.8"];
     } else if ([indexPath row] == 1) {
         [[cell textLabel] setText:@"版本信息"];
-        [[cell detailTextLabel] setText:@"聊天界面优化"];
+        [[cell detailTextLabel] setText:@"增加昵称字段"];
         [[cell detailTextLabel] setNumberOfLines:0];
     } else {
         [[cell textLabel] setText:@"版权所有"];

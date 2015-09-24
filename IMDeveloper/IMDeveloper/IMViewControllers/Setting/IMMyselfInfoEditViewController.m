@@ -7,6 +7,7 @@
 //
 
 #import "IMMyselfInfoEditViewController.h"
+#import "IMDefine.h"
 
 @interface IMMyselfInfoEditViewController ()<UITableViewDataSource, UITableViewDelegate, UITextViewDelegate> {
     UITextView *_textView;
@@ -36,6 +37,7 @@
     // Do any additional setup after loading the view.
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
     
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
     [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
     
     _tableView = [[UITableView alloc] initWithFrame:[[self view] bounds] style:UITableViewStyleGrouped];

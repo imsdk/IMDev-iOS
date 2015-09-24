@@ -31,6 +31,7 @@
     UITableView *_tableView;
     UISwitch *_switch;
     UILabel *_operateLabel;
+    UISwitch *_recvPushMessageSwitch;
     
     BOOL _deleteStatus;
     
@@ -73,6 +74,13 @@
     }
     [_switch setOn:show];
     
+    _recvPushMessageSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(320 - 60, 5, 60, 34)];
+    [_recvPushMessageSwitch addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventTouchUpInside];
+    
+    BOOL recvPushMessage = [_groupInfo receivePushMessage];
+    
+    [_recvPushMessageSwitch setOn:show];
+    
     _operateLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
     
     [_operateLabel setBackgroundColor:[UIColor clearColor]];
@@ -88,13 +96,24 @@
 }
 
 - (void)switchValueChanged:(id)sender {
-    BOOL show = [[[NSUserDefaults standardUserDefaults] objectForKey:IMShowGroupMemberName([g_pIMMyself customUserID], [_groupInfo groupID])] boolValue];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:!show] forKey:IMShowGroupMemberName([g_pIMMyself customUserID], [_groupInfo groupID])];
-    
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:IMShowGroupMemberNameNotification([_groupInfo groupID]) object:nil];
+    if ( sender == _switch) {
+        BOOL show = [[[NSUserDefaults standardUserDefaults] objectForKey:IMShowGroupMemberName([g_pIMMyself customUserID], [_groupInfo groupID])] boolValue];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:!show] forKey:IMShowGroupMemberName([g_pIMMyself customUserID], [_groupInfo groupID])];
+        
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:IMShowGroupMemberNameNotification([_groupInfo groupID]) object:nil];
+
+    } else if (sender == _recvPushMessageSwitch) {
+        __weak UISwitch *_weakSwitch = _recvPushMessageSwitch;
+        
+        [_groupInfo setReceivePushMessage:[_recvPushMessageSwitch isOn] success:^{
+            
+        } failure:^(NSString *error) {
+            [_weakSwitch setOn:![_weakSwitch isOn]];
+        }];
+    }
 }
 
 - (void)setGroupInfo:(IMGroupInfo *)groupInfo {
@@ -205,6 +224,8 @@
         return 1;
     } else if(section == 1) {
         return 4;
+    } else if(section == 2) {
+        return 2;
     }
     
     return 1;
@@ -276,10 +297,17 @@
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         }
     } else if ([indexPath section] == 2){
-        [[cell textLabel] setText:@"显示群成员昵称"];
-        
-        [_switch removeFromSuperview];
-        [[cell contentView] addSubview:_switch];
+        if ([indexPath row] == 0) {
+            [[cell textLabel] setText:@"显示群成员昵称"];
+            
+            [_switch removeFromSuperview];
+            [[cell contentView] addSubview:_switch];
+        } else if ([indexPath row] == 1) {
+            [_recvPushMessageSwitch removeFromSuperview];
+            
+            [[cell textLabel] setText:@"接收推送消息"];
+            [[cell contentView] addSubview:_recvPushMessageSwitch];
+        }
 
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     } else {

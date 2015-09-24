@@ -59,7 +59,11 @@
     
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"个人信息" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItemClick:)];
     
-    [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
+    
+    if (!_isCustomerSevice) {
+        [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
+    }
     
     if ([[[UIDevice currentDevice] systemVersion] floatValue] > 6.9) {
         [self setEdgesForExtendedLayout:UIRectEdgeNone];
@@ -75,7 +79,13 @@
     if ([title length] == 0) {
         title = _customUserID;
     }
-    [_titleLabel setText:title];
+    
+    if (_isCustomerSevice) {
+        [_titleLabel setText:self.title];
+    } else{
+        [_titleLabel setText:title];
+    }
+    
     
     CGFloat height = 480 - 64;
     
@@ -84,7 +94,7 @@
     }
     
     IMChatView *view = [[IMChatView alloc] initWithFrame:CGRectMake(0, 0, 320, height)];
-    [view setCustomUserID:_customUserID];
+    
     [view setKeyboardHighLightImage:[UIImage imageNamed:@"IM_keyboard_normal.png"]];
     [view setKeyboardNormalImage:[UIImage imageNamed:@"IM_keyboard_normal.png"]];
     [view setFaceHighLightImage:[UIImage imageNamed:@"IM_face_normal.png"]];
@@ -98,6 +108,8 @@
     [view setParentController:self];
     [view setDelegate:self];
     [view setDataSource:self];
+    
+    [view setCustomUserID:_customUserID];
     [[self view] addSubview:view];
 }
 
@@ -107,7 +119,12 @@
     if ([title length] == 0) {
         title = _customUserID;
     }
-    [_titleLabel setText:title];
+    
+    if (_isCustomerSevice) {
+        [_titleLabel setText:self.title];
+    } else{
+        [_titleLabel setText:title];
+    }
 }
 
 - (void)didReceiveMemoryWarning

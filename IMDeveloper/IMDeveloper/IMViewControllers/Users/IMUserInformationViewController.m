@@ -75,8 +75,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    _tableView = [[UITableView alloc] initWithFrame:[[self view] bounds] style:UITableViewStyleGrouped];
+    _tableView = [[UITableView alloc] initWithFrame:[[self view] bounds] style:UITableViewStylePlain];
     
+    [_tableView setBackgroundColor:RGB(242, 242, 242)];
     [_tableView setDataSource:self];
     [_tableView setDelegate:self];
     [[self view] addSubview:_tableView];
@@ -127,28 +128,28 @@
     
     [_tableView setTableFooterView:_tableFooterView];
     
-    _sendFriendsRequestBtn = [[UIButton alloc] initWithFrame:CGRectMake(40, 60, 240, 40)];
+    _sendFriendsRequestBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 300, 40)];
     
-    [[_sendFriendsRequestBtn layer] setCornerRadius:10.0f];
-    [_sendFriendsRequestBtn setBackgroundColor:RGB(41, 140, 38)];
+    [[_sendFriendsRequestBtn layer] setCornerRadius:5.0f];
+    [_sendFriendsRequestBtn setBackgroundColor:RGB(6, 191, 4)];
     [_sendFriendsRequestBtn setTitle:@"加为好友" forState:UIControlStateNormal];
     [_sendFriendsRequestBtn setAlpha:0.8];
     [_tableFooterView addSubview:_sendFriendsRequestBtn];
     
     [_sendFriendsRequestBtn addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
 
-    _chatBtn = [[UIButton alloc] initWithFrame:CGRectMake(40, 60, 240, 40)];
+    _chatBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 300, 40)];
     
-    [[_chatBtn layer] setCornerRadius:10.0f];
-    [_chatBtn setBackgroundColor:RGB(44, 164, 232)];
+    [[_chatBtn layer] setCornerRadius:5.0f];
+    [_chatBtn setBackgroundColor:RGB(6, 191, 4)];
     [_chatBtn setTitle:@"发送消息" forState:UIControlStateNormal];
     [_tableFooterView addSubview:_chatBtn];
     
     [_chatBtn addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
 
-    _removeFriendsBtn = [[UIButton alloc] initWithFrame:CGRectMake(40, 120, 240, 40)];
+    _removeFriendsBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 70, 300, 40)];
     
-    [[_removeFriendsBtn layer] setCornerRadius:10.0f];
+    [[_removeFriendsBtn layer] setCornerRadius:5.0f];
     [_removeFriendsBtn setBackgroundColor:RGB(244, 42, 41)];
     [_removeFriendsBtn setTitle:@"删除好友" forState:UIControlStateNormal];
     [_removeFriendsBtn setAlpha:0.8];
@@ -156,9 +157,9 @@
     
     [_removeFriendsBtn addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    _removeBlacklistBtn = [[UIButton alloc] initWithFrame:CGRectMake(40, 120, 240, 40)];
+    _removeBlacklistBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 70, 300, 40)];
     
-    [[_removeBlacklistBtn layer] setCornerRadius:10.0f];
+    [[_removeBlacklistBtn layer] setCornerRadius:5.0f];
     [_removeBlacklistBtn setBackgroundColor:RGB(244, 42, 41)];
     [_removeBlacklistBtn setTitle:@"从黑名单移除" forState:UIControlStateNormal];
     [_removeBlacklistBtn setAlpha:0.8];
@@ -168,6 +169,7 @@
     
     _rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"更多" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonItenClick:)];
     
+    [_rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:RGB(6, 191, 4) forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal];
     [[self navigationItem] setRightBarButtonItem:_rightBarButtonItem];
     
     [self loadHeadImage];
