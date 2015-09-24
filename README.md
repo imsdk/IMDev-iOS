@@ -21,9 +21,9 @@ IMDev——爱萌开发者，是由爱萌基于IM SDK开发并完全开源的的
 * a、进入IMSDK官网下载iOS无界面版（适合高级定制的开发者）IMSDK
 ![img](http://docs.imsdk.im/download/attachments/1343489/%E4%B8%8B%E8%BD%BD.jpg?version=1&modificationDate=1415244531000&api=v2&effects=border-polaroid,blur-border)
 
-* b、将下载到的文件解压，得到一个IMSDKDemo的目录
-* c、在IMSDKDemo/IMSDKDemo目录下找到Release-iphonesimulator，将Release-iphonesimulator目录拖入您所要嵌入的工程目录(Release-iphoneos为真机目录)：
-![img](http://docs.imsdk.im/download/attachments/1343489/%E5%B5%8C%E5%85%A5IMSDK.png?version=1&modificationDate=1415249293000&api=v2&effects=border-polaroid,blur-border)
+* b、将下载到的文件解压，得到一个IMSDK-Full-iOS_v1.3.5的目录
+* c、在IMSDK-Full-iOS_v1.3.5目录下找到IMSDK-Lib，将IMSDK-Lib目录拖入您所要嵌入的工程目录(iOS v1.2.7之前的版本分为Release-iphonesimulator和Release-iphoneos分别对应模拟器和真机lib目录，v1.2.7之后合并为IMSDK-Lib)：
+![img](http://docs.imsdk.im/download/attachments/1343489/35CA0AD9-ECE2-452D-95F3-D97507964F6D.png?version=1&modificationDate=1429670557000&api=v2)
 
 2、添加必要的系统框架，配置编译选项
 
